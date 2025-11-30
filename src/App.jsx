@@ -10,12 +10,15 @@ import Register from "./pages/Auth/Register";
 import Profile from "./pages/User/Profile";
 import ProductDetail from "./pages/products/ProductDetail";
 import Cart from "./pages/Carts/Cart";
-import UserManager from "./pages/Admin/Pages/UserManager";
+import UserManager from "./pages/Admin/Pages/UserManage";
 import AdminPage from "./pages/Admin/AdminPage";
 import DashboardManager from "./pages/Admin/Pages/AdminDashboard";
 import Checkout from "./pages/Checkouts/Checkout";
 import ProductPage from "./pages/Products/ProductPage";
 import PublicLayout from "./Layouts/PublicLayout";
+import ManageProducts from "./pages/Admin/Pages/ProductsManage";
+import ManageOrders from "./pages/Admin/Pages/OrdersManage";
+import AddProductModal from "./pages/Admin/componentAdmin/AddProduct";
 
 function App() {
   return (
@@ -46,8 +49,10 @@ function App() {
           <Route path="/admin" element={<AdminPage />}>
             <Route index element={ <DashboardManager /> } />
             <Route path="/admin/users" element={<UserManager />} />
-            <Route path="/admin/products" element={<div>Manage Products</div>} />
-            <Route path="/admin/orders" element={<div>Orders</div>} />
+            <Route path="/admin/products" element={<ManageProducts />}>
+              <Route path="/admin/products/addProducts" element={ <AddProductModal /> } />
+            </Route>
+            <Route path="/admin/orders" element={<ManageOrders />} />
           </Route>
         </Route>
 

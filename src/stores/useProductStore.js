@@ -1,21 +1,29 @@
 import { create } from 'zustand';
-import { categories, products } from '../mockData/data';
+import { categories as initialCategories, products as initialProducts } from '../mockData/data';
 
 export const useProductStore = create((set, get) => ({
-  products: products,
-  categories: categories,
-  
+  products: initialProducts,
+  categories: initialCategories,
+
+  // Thêm sản phẩm
   addProduct: (product) => set((state) => ({
-    products: [...state.products, product]
+    products: [...state.products, product],
   })),
+
+  // Xóa sản phẩm theo id
   removeProduct: (id) => set((state) => ({
-    products: state.products.filter(p => p.id !== id)
+    products: state.products.filter(p => p.id !== id),
   })),
 
-  getCategoryName: (categoryId) => {
-    const categories = get().categories || [];
-    const category = categories.find(c => c.id === categoryId);
-    return category ? category.categoryName : 'Unknown';
-  },
+  // Cập nhật sản phẩm theo id
+  updateProduct: (updatedProduct) =>
+  set((state) => ({
+    products: state.products.map(p => p.id === updatedProduct.id ? updatedProduct : p)
+  })),
 
+  // Lấy tên category từ categoryId
+  getCategoryName: (categoryId) => {
+    const category = get().categories.find(c => c.id === categoryId);
+    return category?.categoryName || 'Unknown';
+  },
 }));

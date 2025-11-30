@@ -1,13 +1,15 @@
-import { LayoutDashboard, Menu, Settings, Users } from "lucide-react";
+import { Handbag, LayoutDashboard, Menu, ReceiptText, Settings, Users } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
 
 export default function SideBar() {
     const [open, setOpen] = useState(true);
-    const location = useLocation(); // <-- lấy URL hiện tại
+    const location = useLocation();
 
     const menuItems = [
         { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/admin" },
+        { label: "Products", icon: <Handbag size={20} />, path: "/admin/products" },
+        { label: "Orders", icon: <ReceiptText size={20} />, path: "/admin/orders" },
         { label: "Users", icon: <Users size={20} />, path: "/admin/users" },
         { label: "Settings", icon: <Settings size={20} />, path: "/admin/settings" }
     ];
@@ -22,7 +24,6 @@ export default function SideBar() {
                 <ul className="space-y-3">
                     {menuItems.map((item) => {
                         const isActive = location.pathname === item.path;
-
                         return (
                             <li key={item.path}>
                                 <Link

@@ -1,15 +1,15 @@
 import { create } from "zustand";
-import { users } from "../mockData/data";
+import { users as mockUsers } from "../mockData/data";
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
   token: localStorage.getItem("token") || null,
   user: JSON.parse(localStorage.getItem("user")) || null,
+  users: [...mockUsers],
 
-  // LOGIN bằng mockData
+  // LOGIN
   login: (email, password) => {
-    const foundUser = users.find(
-      (u) => u.email === email && u.password === password
-    );
+    const { users } = get();
+    const foundUser = users.find((u) => u.email === email && u.password === password);
 
     if (!foundUser) {
       return { success: false, message: "Email hoặc mật khẩu không đúng" };
@@ -17,7 +17,6 @@ export const useAuthStore = create((set) => ({
 
     const fakeToken = "FAKE_TOKEN_" + Date.now();
 
-    // lưu localStorage
     localStorage.setItem("token", fakeToken);
     localStorage.setItem("user", JSON.stringify(foundUser));
 
@@ -26,8 +25,9 @@ export const useAuthStore = create((set) => ({
     return { success: true, role: foundUser.role };
   },
 
-  // REGISTER (thêm user mới)
+  // REGISTER
   register: (name, email, password) => {
+    const { users } = get();
     const exists = users.find((u) => u.email === email);
 
     if (exists) {
@@ -40,31 +40,59 @@ export const useAuthStore = create((set) => ({
       email,
       password,
       role: "user",
+      status: "Active",
+      avatar: null,
     };
 
-    users.push(newUser);
-
     const fakeToken = "FAKE_TOKEN_" + Date.now();
+    set({ 
+      users: [...users, newUser],
+      user: newUser,
+      token: fakeToken
+    });
 
     localStorage.setItem("token", fakeToken);
     localStorage.setItem("user", JSON.stringify(newUser));
-
-    set({ token: fakeToken, user: newUser });
 
     return { success: true };
   },
 
   // Cập nhật user
-  updateUser: (newUserData) => {
-    localStorage.setItem("user", JSON.stringify(newUserData));
-    set({ user: newUserData });
+  updateUser: (updatedUser) => {
+    const { users } = get();
+    const newUsers = users.map(u => u.id === updatedUser.id ? updatedUser : u);
+
+    set({ 
+      users: newUsers,
+      user: updatedUser
+    });
+
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  },
+
+  // Xóa user
+  deleteUser: (userId) => {
+    const { users, user, token } = get();
+    const newUsers = users.filter(u => u.id !== userId);
+
+    let updatedUser = user;
+    let updatedToken = token;
+
+    // Nếu xóa chính mình thì logout
+    if (user && user.id === userId) {
+      updatedUser = null;
+      updatedToken = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
+
+    set({ users: newUsers, user: updatedUser, token: updatedToken });
   },
 
   // Logout
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
     set({ token: null, user: null });
   },
 }));

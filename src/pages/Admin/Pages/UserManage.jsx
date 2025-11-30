@@ -1,14 +1,29 @@
-import { Search, Edit, Trash2, UserPlus, MoreVertical } from 'lucide-react';
+import { Search, Edit, Trash2 } from 'lucide-react';
+import { useAuthStore } from '../../../stores/useAuthStore';
+import { useState } from 'react';
+import EditUser from '../componentAdmin/EditUser';
 
 export default function UserManager() {
-  // Mock Data
-  const users = [
-    { id: 1, name: 'Nguyễn Văn A', email: 'nguyenvana@example.com', role: 'Admin', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=1' },
-    { id: 2, name: 'Trần Thị B', email: 'tranthib@example.com', role: 'User', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=2' },
-    { id: 3, name: 'Lê Văn C', email: 'levanc@example.com', role: 'Editor', status: 'Inactive', avatar: 'https://i.pravatar.cc/150?u=3' },
-    { id: 4, name: 'Phạm Thị D', email: 'phamthid@example.com', role: 'User', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=4' },
-    { id: 5, name: 'Hoàng Văn E', email: 'hoangvane@example.com', role: 'User', status: 'Suspended', avatar: 'https://i.pravatar.cc/150?u=5' },
-  ];
+  const users = useAuthStore((s) => s.users);
+  const updateUser = useAuthStore((s) => s.updateUser);
+  const deleteUser = useAuthStore((s) => s.deleteUser);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setIsEditOpen(true);
+  };
+
+  const handleSaveUser = (updatedUser) => {
+    updateUser(updatedUser);
+  };
+
+  const handleDeleteUser = (userId) => {
+    if (confirm("Bạn có chắc muốn xóa user này?")) {
+      deleteUser(userId);
+    }
+  };
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
@@ -17,21 +32,16 @@ export default function UserManager() {
           <h1 className="text-2xl font-bold text-gray-800">Quản lý người dùng</h1>
           <p className="text-sm text-gray-500 mt-1">Danh sách tất cả thành viên trong hệ thống</p>
         </div>
-        <button className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm">
-          <UserPlus size={18} />
-          <span>Thêm mới</span>
-        </button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        {/* Toolbar */}
         <div className="p-4 border-b border-gray-100 flex gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input 
               type="text" 
               placeholder="Tìm kiếm theo tên, email..." 
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             />
           </div>
           <select className="px-4 py-2 border rounded-lg text-sm text-gray-600 focus:outline-none cursor-pointer">
@@ -41,7 +51,6 @@ export default function UserManager() {
           </select>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-gray-50 text-gray-600 text-xs uppercase font-semibold">
@@ -76,10 +85,16 @@ export default function UserManager() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <button className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
+                      <button 
+                        onClick={() => handleEditClick(user)}
+                        className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition cursor-pointer"
+                      >
                         <Edit size={18} />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
+                      <button 
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                      >
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -90,15 +105,20 @@ export default function UserManager() {
           </table>
         </div>
         
-        {/* Pagination Footer */}
         <div className="p-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
-          <span>Hiển thị 1-5 trong số 24 người dùng</span>
+          <span>Hiện Có Tổng User: {users.length}</span>
           <div className="flex gap-2">
-            <button className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50" disabled>Trước</button>
-            <button className="px-3 py-1 border rounded hover:bg-gray-50">Sau</button>
+            <button className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 cursor-pointer" disabled>Trước</button>
+            <button className="px-3 py-1 border rounded hover:bg-gray-50 cursor-pointer">Sau</button>
           </div>
         </div>
       </div>
+      <EditUser 
+        isOpen={isEditOpen} 
+        onClose={() => setIsEditOpen(false)} 
+        user={selectedUser} 
+        onSave={handleSaveUser} 
+      />
     </div>
   );
-};
+}
