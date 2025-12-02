@@ -3,6 +3,7 @@ import { useAuthStore } from "../stores/useAuthStore";
 import { Link } from "react-router";
 
 export default function BtnSetting() {
+    const user = useAuthStore((s) => s.user);
     const [open, setOpen] = useState(false);
     const logout = useAuthStore((state) => state.logout);
 
@@ -23,6 +24,15 @@ export default function BtnSetting() {
             open ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"
         }`}
         >
+            {user.role === "admin" ? (
+                <li className="relative px-3 py-1 group">
+                    <Link to="/admin" className="hover:text-orange-200 transition relative z-10">
+                        Admin Manage
+                        <div className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-400 transition-all duration-300 group-hover:w-full" />
+                    </Link>
+                </li>
+            ) : null}
+            
             <li className="relative px-3 py-1 group">
                 <Link to="/transactionHistory" className="hover:text-orange-200 transition relative z-10">
                     Lịch Sử Giao Dịch
@@ -30,7 +40,7 @@ export default function BtnSetting() {
                 </Link>
             </li>
             <li className="relative px-3 py-1 group">
-                <Link to="/order" className="hover:text-orange-200 transition relative z-10">
+                <Link to="/orders" className="hover:text-orange-200 transition relative z-10">
                     Đơn Hàng
                     <div className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-400 transition-all duration-300 group-hover:w-full" />
                 </Link>

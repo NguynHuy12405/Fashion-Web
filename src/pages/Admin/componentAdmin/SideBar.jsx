@@ -15,17 +15,18 @@ export default function SideBar() {
     ];
 
     return (
+    <>
         <div className={`${open ? "w-64" : "w-20"} bg-white p-4 shadow-md transition-all`}>
-            <button onClick={() => setOpen(!open)} className="mb-6">
+            <button onClick={() => setOpen(!open)} className="mb-6 ml-2 cursor-pointer">
                 <Menu />
             </button>
 
-            <nav className="flex-1">
-                <ul className="space-y-3">
+            <nav className="flex-1 flex flex-col justify-between">
+                <ul className="space-y-3 flex flex-col justify-start">
                     {menuItems.map((item) => {
                         const isActive = location.pathname === item.path;
                         return (
-                            <li key={item.path}>
+                            <li key={item.path} className="text-center">
                                 <Link
                                     to={item.path}
                                     className={`flex items-center gap-3 p-2 rounded-xl transition 
@@ -38,7 +39,9 @@ export default function SideBar() {
                         );
                     })}
                 </ul>
+                <Link to="/" className="flex items-center p-2">Back to Home</Link>
             </nav>
         </div>
+    </>
     );
 }

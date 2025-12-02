@@ -65,7 +65,7 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
                     {imagePreview ? (
                     <div className="relative w-full h-full p-2">
                         <img src={imagePreview} alt="Preview" className="w-full h-full object-contain rounded-lg" />
-                        <button type="button" onClick={(e) => { e.stopPropagation(); setImagePreview(null); }} className="absolute top-3 right-3 bg-white/80 p-1.5 rounded-full shadow-sm hover:text-red-500">
+                        <button type="button" onClick={(e) => { e.stopPropagation(); setImagePreview(null); }} className="absolute top-3 right-3 bg-white/80 p-1.5 rounded-full shadow-sm hover:text-red-500 cursor-pointer">
                         <X size={16} />
                         </button>
                     </div>

@@ -1,5 +1,3 @@
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import ProductList from "../components/ProductList";
 import Slider from "../components/Slider";
 
@@ -19,6 +17,7 @@ export default function DashBoard() {
         <ProductList titleProducts="Sản Phẩm New" />
         <ProductList titleProducts="Tất Cả" />
       </section>
+
     </>
   );
 }

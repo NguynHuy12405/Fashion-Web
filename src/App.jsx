@@ -8,7 +8,6 @@ import NotFound404 from "./pages/Error/NotFound404";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Profile from "./pages/User/Profile";
-import ProductDetail from "./pages/products/ProductDetail";
 import Cart from "./pages/Carts/Cart";
 import UserManager from "./pages/Admin/Pages/UserManage";
 import AdminPage from "./pages/Admin/AdminPage";
@@ -19,6 +18,8 @@ import PublicLayout from "./Layouts/PublicLayout";
 import ManageProducts from "./pages/Admin/Pages/ProductsManage";
 import ManageOrders from "./pages/Admin/Pages/OrdersManage";
 import AddProductModal from "./pages/Admin/componentAdmin/AddProduct";
+import ProductDetail from "./pages/Products/ProductDetail";
+import OrdersPage from "./pages/Order/Order";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<OrdersPage />} />
         </Route>
 
         {/*  Admin  */}

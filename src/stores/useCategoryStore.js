@@ -1,15 +1,14 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { categories } from "../mockData/data";
+import { categories as MockCategories } from "../mockData/data";
 
 export const useCategoryStore = create(
   devtools(
     persist(
       (set, get) => ({
-        categories: categories,
+        categories: [...MockCategories],
 
         // ===== CRUD =====
-
         addCategory: (category) =>
           set((state) => ({
             categories: [...state.categories, category],
@@ -30,7 +29,6 @@ export const useCategoryStore = create(
         clearCategories: () => set({ categories: [] }),
 
         // ===== SELECTORS =====
-
         getCategoryById: (id) => {
           return get().categories.find((cat) => cat.id === id);
         },

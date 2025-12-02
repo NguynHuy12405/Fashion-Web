@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Plus, Filter, Edit2, Trash } from 'lucide-react';
 import { useProductStore } from '../../../stores/useProductStore';
 import AddProduct from '../componentAdmin/AddProduct';
@@ -7,6 +7,7 @@ import StatusBadge from '../../../components/StatusBadge';
 
 export default function ManageProducts() {
   const products = useProductStore((s) => s.products);
+  const loadProducts = useProductStore((s) => s.loadProducts);
   const updateProduct = useProductStore((s) => s.updateProduct);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -18,9 +19,13 @@ export default function ManageProducts() {
   };
 
   const handleSaveProduct = (updatedProduct) => {
-    updateProduct(updatedProduct); // cần implement updateProduct trong store
+    updateProduct(updatedProduct);
     setIsEditOpen(false);
   };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen p-8">

@@ -1,37 +1,49 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Star, ShoppingCart, Heart, Minus, Plus, Truck, ShieldCheck } from 'lucide-react';
-import { product } from '../../mockData/data';
+import { useProductStore } from '../../stores/useProductStore';
+import { useParams } from 'react-router';
 
 export default function ProductDetail() {
+  const detail = useProductStore((s) => s.productDetail);
+  const loadProductDetail = useProductStore((s) => s.loadProductDetail);
+
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const { id } = useParams();
 
   const handleQuantity = (type) => {
     if (type === 'dec' && quantity > 1) setQuantity(quantity - 1);
     if (type === 'inc') setQuantity(quantity + 1);
   };
 
+  useEffect(() => {
+    loadProductDetail(Number(id));
+  }, [id]);
+
+  if (!detail) return <p>Không tìm thấy sản phẩm</p>;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-          
+
           {/* CỘT TRÁI: HÌNH ẢNH */}
           <div className="p-8 bg-white flex flex-col items-center border-r border-gray-100">
             <div className="w-full aspect-square mb-6 rounded-xl overflow-hidden bg-gray-50 relative group">
               <img 
-                src={product.images[selectedImage]} 
+                src={detail.images[selectedImage]} 
                 alt="Main product" 
                 className="w-full h-full object-cover object-center mix-blend-multiply"
               />
             </div>
+
             {/* Thumbnails */}
             <div className="flex gap-4 overflow-x-auto w-full pb-2 justify-center">
-              {product.images.map((img, idx) => (
+              {detail.images.map((img, idx) => (
                 <button 
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`w-20 h-20 rounded-lg border-2 overflow-hidden flex-shrink-0 transition-all
+                  className={`w-20 h-20 rounded-lg border-2 overflow-hidden shrink-0 transition-all
                     ${selectedImage === idx ? 'border-indigo-600 ring-2 ring-indigo-100' : 'border-gray-200 hover:border-indigo-400'}`}
                 >
                   <img src={img} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
@@ -48,31 +60,33 @@ export default function ProductDetail() {
               </span>
             </div>
             
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{detail.name}</h1>
             
             <div className="flex items-center gap-4 mb-6">
               <div className="flex text-yellow-400">
                 {[...Array(5)].map((_, i) => (
-                   <Star key={i} size={18} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} />
+                  <Star key={i} size={18} fill={i < Math.floor(detail.rating) ? "currentColor" : "none"} />
                 ))}
               </div>
-              <span className="text-gray-500 text-sm">({product.reviews} đánh giá)</span>
+              <span className="text-gray-500 text-sm">({detail.reviews} đánh giá)</span>
             </div>
 
             <div className="flex items-end gap-3 mb-8 border-b border-gray-100 pb-8">
               <span className="text-4xl font-bold text-indigo-700">
-                {product.price.toLocaleString('vi-VN')}₫
+                {detail.price.toLocaleString('vi-VN')}₫
               </span>
+
+              {/* ✔ FIX originalPrice */}
               <span className="text-lg text-gray-400 line-through mb-1">
-                {product.originalPrice.toLocaleString('vi-VN')}₫
+                {(detail.originalPrice || detail.price * 1.2).toLocaleString('vi-VN')}₫
               </span>
             </div>
 
             <p className="text-gray-600 mb-8 leading-relaxed">
-              {product.description}
+              {detail.description}
             </p>
 
-            {/* Chọn số lượng */}
+            {/* Số lượng */}
             <div className="flex items-center gap-6 mb-8">
               <span className="font-semibold text-gray-700">Số lượng:</span>
               <div className="flex items-center border border-gray-300 rounded-lg">
@@ -82,7 +96,7 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Nút bấm */}
+            {/* Nút */}
             <div className="flex gap-4 mb-8">
               <button className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2">
                 <ShoppingCart size={20} />
@@ -104,9 +118,10 @@ export default function ProductDetail() {
                 <span>Bảo hành chính hãng 12 tháng</span>
               </div>
             </div>
+
           </div>
         </div>
       </div>
     </div>
   );
-};
+}

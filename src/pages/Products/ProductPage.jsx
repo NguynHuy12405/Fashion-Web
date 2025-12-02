@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import Footer from '../../components/Footer';
-import Header from '../../components/Header';
+import { useEffect, useState } from 'react';
 import Pagination from '../../components/Pagination';
 import SideBarFilter from '../../components/SideBarFilter';
 import ProductCard from '../../components/ProductCard';
@@ -9,10 +7,10 @@ import { useProductStore } from '../../stores/useProductStore';
 
 export default function ProductPage() {
     const products = useProductStore((s) => s.products)
+    const loadProducts = useProductStore((s) => s.loadProducts);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(12);
 
-    // Logic phân trang
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -22,13 +20,14 @@ export default function ProductPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    useEffect(() => {
+        loadProducts();
+    }, [])
+
   return (
     <>
-        {/* Header */}
-        <Header />
-        
         {/* Breadcrumb & Title */}
-        <div className="text-black mx-auto px-4 pt-[100px] pb-8 min-h-screen bg-white flex flex-col ">
+        <div className="text-black mx-auto px-4 pt-[30px] pb-8 min-h-screen bg-white flex flex-col ">
             <div className="flex flex-col lg:flex-row gap-8">
                 <aside className="w-full lg:w-1/4 shrink-0">
                     <SideBarFilter />
@@ -66,9 +65,6 @@ export default function ProductPage() {
                 </main>
             </div>
         </div>
-
-        {/* Footer */}
-        <Footer />
     </>
   );
 };

@@ -1,50 +1,51 @@
-// Categories
 export const categories = [
-  { id: 0, name: "Tất cả" },
-  { id: 1, name: "Áo Thun" },
-  { id: 2, name: "Giày" },
-  { id: 3, name: "Quần dài" },
-  { id: 4, name: "Áo Hoodie" },
-  { id: 5, name: "Áo Jacket" },
-  { id: 6, name: "Mũ" },
+  { id: 0, categoryName: "Tất cả" },
+  { id: 1, categoryName: "Áo Thun" },
+  { id: 2, categoryName: "Giày" },
+  { id: 3, categoryName: "Quần dài" },
+  { id: 4, categoryName: "Áo Hoodie" },
+  { id: 5, categoryName: "Áo Jacket" },
+  { id: 6, categoryName: "Mũ" },
 ];
 
 // Products
-export const products = Array.from({ length: 24 }, (_, i) => {
-  const stock = Math.floor(Math.random() * 21);
-  let status = "Còn hàng";
-  if (stock === 0) status = "Hết hàng";
-  else if (stock <= 5) status = "Sắp hết";
+export const products = (() => {
+  const products = Array.from({ length: 24 }, (_, i) => {
+    const stock = Math.floor(Math.random() * 21);
+    let status = "Còn hàng";
+    if (stock === 0) status = "Hết hàng";
+    else if (stock <= 5) status = "Sắp hết";
+
+    return {
+      id: i + 1,
+      name: `Sản phẩm cao cấp ${i + 1}`,
+      categoryId: (i % 6) + 1,
+      price: Math.floor(Math.random() * 1000000 + 100000),
+      image: `https://picsum.photos/300/300?random=${i + 1}`,
+      rating: Number((Math.random() * 2 + 3).toFixed(1)),
+      reviews: Math.floor(Math.random() * 100),
+      stock,
+      status,
+      description: `Mô tả chi tiết cho sản phẩm cao cấp ${i + 1}. Sản phẩm chất lượng cao, được nhiều người tin dùng.`,
+      images: Array.from({ length: 4 }, (_, j) => `https://picsum.photos/600/600?random=${i * 10 + j}`),
+    };
+  });
+
+  // Hàm tự tạo singleProduct từ id
+  const getSingleProduct = (id) => {
+    return products.find((p) => p.id === id) || null;
+  };
 
   return {
-    id: i + 1,
-    name: `Sản phẩm cao cấp ${i + 1}`,
-    categoryId: (i % 6) + 1,
-    price: Math.floor(Math.random() * 1000000 + 100000),
-    image: `https://picsum.photos/300/300?random=${i + 1}`,
-    rating: Number((Math.random() * 2 + 3).toFixed(1)),
-    reviews: Math.floor(Math.random() * 100),
-    stock,
-    status,
+    products,
+    singleProduct: getSingleProduct(1),
+    getSingleProduct,
   };
-});
-
-
-// Single product detail
-export const product = {
-  name: "Tai nghe chống ồn Sony WH-1000XM5",
-  price: 8490000,
-  originalPrice: 9990000,
-  rating: 4.8,
-  reviews: 128,
-  description:
-    "Tai nghe over-ear chống ồn hàng đầu với công nghệ Auto NC Optimizer, thời lượng pin 30 giờ và thiết kế siêu nhẹ mang lại cảm giác thoải mái suốt ngày dài.",
-  images: Array.from({ length: 4 }, (_, i) => `https://picsum.photos/600/600?random=${i + 1}`),
-};
+})();
 
 // Orders
 export const orders = [
-  { id: "#ORD-7782", customer: "Nguyễn Văn A", date: "2023-10-25", items: 3, total: 32500000, status: "Hoàn thành" },
+  { id: "#ORD-7782", customer: "Nguyễn Văn A", date: "2023-10-25", items: 3, total: 32500000, status: "Hoàn thành", },
   { id: "#ORD-7783", customer: "Trần Thị B", date: "2023-10-26", items: 1, total: 1200000, status: "Đang xử lý" },
   { id: "#ORD-7784", customer: "Lê Hoàng C", date: "2023-10-26", items: 5, total: 15800000, status: "Đang giao" },
   { id: "#ORD-7785", customer: "Phạm Nhật D", date: "2023-10-27", items: 2, total: 550000, status: "Đã hủy" },

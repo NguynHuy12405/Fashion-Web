@@ -13,13 +13,13 @@ export default function NavBar() {
                 <Link to="/" className="hover:text-orange-200 transition">
                     Trang chủ
                 </Link>
-                <div className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-400 transition-all duration-300 group-hover:w-full"></div>
+                <div className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-400 transition-all duration-300 group-hover:w-full" />
             </li>
             <li className="relative">
                 <button onClick={() => setOpen(!open)} className="hover:text-orange-200 transition flex items-center gap-1 cursor-pointer group relative">
                     Danh Mục
                     <i className="fa-solid fa-chevron-down text-[14px]" />
-                    <div className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-400 transition-all duration-300 group-hover:w-full"></div>
+                    <div className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-400 transition-all duration-300 group-hover:w-full" />
                 </button>
                 
                 <ul
