@@ -1,6 +1,12 @@
-import { Download, Eye, ChevronDown, Package, CheckCircle, Clock } from 'lucide-react';
-import { orders } from '../../../mockData/data';
+import { Download, Eye, Package, CheckCircle, Clock } from 'lucide-react';
 import StatusBadge from '../../../components/StatusBadge';
+import React, { useState, useMemo } from 'react';
+import OrderDetail from '../../Order/OrderDetail';
+import { useOrderStore } from '../../../stores/useOrderStore';
+import { useAuthStore } from '../../../stores/useAuthStore';
+
+const STATUS_OPTIONS = ["Tất cả", "Đang xử lý", "Hoàn thành", "Đã hủy"];
+const PAGE_SIZE = 10;
 
 const StatCard = ({ label, value, icon: Icon, color }) => (
   <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
@@ -15,7 +21,37 @@ const StatCard = ({ label, value, icon: Icon, color }) => (
 );
 
 export default function ManageOrders()  {
+  const user = useAuthStore((s) => s.user);
+  const getAllOrders = useOrderStore((s) => s.getAllOrders);
+  const getOrdersByCurrentUser = useOrderStore((s) => s.getOrdersByCurrentUser);
   
+  const [openOrderId, setOpenOrderId] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("Tất cả");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Phân quyền
+  const orders = user?.role === "admin" ? getAllOrders() : getOrdersByCurrentUser();
+
+  // Lọc theo trạng thái
+  const filteredOrders = useMemo(() => {
+    if (statusFilter === "Tất cả") return orders;
+    return orders.filter(o => o.status === statusFilter);
+  }, [orders, statusFilter]);
+
+  // Phân trang
+  const totalPages = Math.ceil(filteredOrders.length / PAGE_SIZE);
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  const toggleOrder = (id) => {
+    setOpenOrderId(openOrderId === id ? null : id);
+  };
+
+  const handlePrevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+  const handleNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+
   return (
     <div className="bg-gray-50 min-h-screen p-8">
       {/* Header */}
@@ -29,24 +65,29 @@ export default function ManageOrders()  {
         </button>
       </div>
 
-      {/* Stats Cards */}
+      {/* Thống kê */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard label="Tổng đơn hàng" value={orders.length} icon={Package} color="bg-blue-500" />
-        <StatCard label="Đang chờ xử lý" value="12" icon={Clock} color="bg-yellow-500" />
-        <StatCard label="Hoàn thành hôm nay" value="45" icon={CheckCircle} color="bg-green-500" />
+        <StatCard label="Đang chờ xử lý" value={orders.filter(o => o.status === "Đang xử lý").length} icon={Clock} color="bg-yellow-500" />
+        <StatCard label="Hoàn thành" value={orders.filter(o => o.status === "Hoàn thành").length} icon={CheckCircle} color="bg-green-500" />
       </div>
 
-      {/* Orders Table */}
+      {/* Filter */}
+      <div className="mb-4 flex items-center gap-4">
+        <span className="text-gray-600 text-sm">Lọc trạng thái:</span>
+        <select
+          value={statusFilter}
+          onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+          className="px-2 py-1 border border-gray-300 rounded text-sm"
+        >
+          {STATUS_OPTIONS.map(status => (
+            <option key={status} value={status}>{status}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Bảng đơn hàng */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-5 border-b border-gray-100 flex justify-between items-center">
-            <h2 className="font-semibold text-gray-800">Danh sách đơn hàng</h2>
-            <div className="flex gap-2">
-                {/* Ví dụ về nút lọc trạng thái */}
-                <button className="text-xs font-medium text-gray-500 hover:text-blue-600 flex items-center gap-1">
-                    Trạng thái: Tất cả <ChevronDown size={14} />
-                </button>
-            </div>
-        </div>
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50/50 border-b border-gray-100 text-xs uppercase text-gray-500 font-semibold tracking-wider">
@@ -60,41 +101,49 @@ export default function ManageOrders()  {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
-                <td className="px-6 py-4 font-semibold text-blue-600 hover:underline cursor-pointer">
-                  {order.id}
-                </td>
-                <td className="px-6 py-4">
+            {paginatedOrders.map(order => (
+              <React.Fragment key={order.id}>
+                <tr className="hover:bg-gray-50/80 transition-colors">
+                  <td className="px-6 py-4 font-semibold text-blue-600 hover:underline cursor-pointer">{order.id}</td>
+                  <td className="px-6 py-4">
                     <div className="flex flex-col">
-                        <span className="font-medium text-gray-800 text-sm">{order.customer}</span>
-                        <span className="text-xs text-gray-400">Khách vãng lai</span>
+                      <span className="font-medium text-gray-800 text-sm">{order.customer}</span>
+                      <span className="text-xs text-gray-400">
+                        {order.userId ? "Tài khoản" : "Khách vãng lai"} {user?.role === "admin" && order.userId && `(ID: ${order.userId})`}
+                      </span>
                     </div>
-                </td>
-                <td className="px-6 py-4 text-gray-600 text-sm">{order.date}</td>
-                <td className="px-6 py-4 text-gray-600 text-sm">{order.items} sản phẩm</td>
-                <td className="px-6 py-4 font-medium text-gray-800">{order.total}</td>
-                <td className="px-6 py-4">
-                  <StatusBadge status={order.status} />
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                    <Eye size={18} />
-                  </button>
-                </td>
-              </tr>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600 text-sm">{order.date}</td>
+                  <td className="px-6 py-4 text-gray-600 text-sm">{order.items.reduce((sum, item) => sum + item.quantity, 0)} sản phẩm</td>
+                  <td className="px-6 py-4 font-medium text-gray-800">{order.total.toLocaleString()}₫</td>
+                  <td className="px-6 py-4"><StatusBadge status={order.status} /></td>
+                  <td className="px-6 py-4 text-right">
+                    <button onClick={() => toggleOrder(order.id)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                      <Eye size={18} />
+                    </button>
+                  </td>
+                </tr>
+                {openOrderId === order.id && (
+                  <tr>
+                    <td colSpan="7" className="bg-gray-50">
+                      <OrderDetail order={order} />
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>
-        
-        {/* Pagination đơn giản */}
-        <div className="p-4 border-t border-gray-100 flex justify-end gap-2">
-            <button className="px-3 py-1 border border-gray-200 rounded text-sm text-gray-500 hover:bg-gray-50">Trước</button>
-            <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm">1</button>
-            <button className="px-3 py-1 border border-gray-200 rounded text-sm text-gray-500 hover:bg-gray-50">2</button>
-            <button className="px-3 py-1 border border-gray-200 rounded text-sm text-gray-500 hover:bg-gray-50">Sau</button>
-        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-gray-100 flex justify-end gap-2">
+            <button onClick={handlePrevPage} disabled={currentPage === 1} className="px-3 py-1 border border-gray-200 rounded text-sm text-gray-500 hover:bg-gray-50">Trước</button>
+            <span className="px-3 py-1 text-sm">{currentPage} / {totalPages}</span>
+            <button onClick={handleNextPage} disabled={currentPage === totalPages} className="px-3 py-1 border border-gray-200 rounded text-sm text-gray-500 hover:bg-gray-50">Sau</button>
+          </div>
+        )}
       </div>
     </div>
   );
-};
+}

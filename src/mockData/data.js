@@ -31,7 +31,6 @@ export const products = (() => {
     };
   });
 
-  // Hàm tự tạo singleProduct từ id
   const getSingleProduct = (id) => {
     return products.find((p) => p.id === id) || null;
   };
@@ -45,10 +44,84 @@ export const products = (() => {
 
 // Orders
 export const orders = [
-  { id: "#ORD-7782", customer: "Nguyễn Văn A", date: "2023-10-25", items: 3, total: 32500000, status: "Hoàn thành", },
-  { id: "#ORD-7783", customer: "Trần Thị B", date: "2023-10-26", items: 1, total: 1200000, status: "Đang xử lý" },
-  { id: "#ORD-7784", customer: "Lê Hoàng C", date: "2023-10-26", items: 5, total: 15800000, status: "Đang giao" },
-  { id: "#ORD-7785", customer: "Phạm Nhật D", date: "2023-10-27", items: 2, total: 550000, status: "Đã hủy" },
+  {
+    id: "#ORD-7782",
+    userId: 1,
+    customer: "Nguyễn Văn A",
+    date: "2023-10-25", 
+    items: [
+      {
+        id: 1,
+        nameItem: "Áo Thun Xanh",
+        quantity: 2,
+      },
+      {
+        id: 2,
+        nameItem: "Áo Thun Đỏ",
+        quantity: 1,
+      },
+    ],
+    total: 32500000,
+    status: "Hoàn thành",
+  },
+  { 
+    id: "#ORD-7783",
+    userId: 3,
+    customer: "Trần Thị B",
+    date: "2023-10-26", 
+    items: [
+      {
+        id: 1,
+        nameItem: "Áo Thun Xanh",
+        quantity: 2,
+      },
+      {
+        id: 2,
+        nameItem: "Áo Thun Đỏ",
+        quantity: 1,
+      },
+    ], total: 1200000,
+    status: "Đang xử lý"
+  },
+  { 
+    id: "#ORD-7784",
+    userId: 4,
+    customer: "Lê Hoàng C",
+    date: "2023-10-26",
+    items: [
+      {
+        id: 1,
+        nameItem: "Áo Thun Trắng",
+        quantity: 2,
+      },
+      {
+        id: 2,
+        nameItem: "Áo Thun Vàng",
+        quantity: 1,
+      },
+    ],
+    total: 15800000,
+    status: "Đang giao"
+  },
+  {
+    id: "#ORD-7785",
+    customer: "Phạm Nhật D",
+    date: "2023-10-27",
+    items: [
+      {
+        id: 1,
+        nameItem: "Áo Thun Tím",
+        quantity: 2,
+      },
+      {
+        id: 2,
+        nameItem: "Áo Thun Hồng",
+        quantity: 1,
+      },
+    ],
+    total: 550000,
+    status: "Đã hủy"
+  },
 ];
 
 // Users
@@ -75,7 +148,7 @@ export const stats = [
   { label: "Đơn hàng mới", value: orders.length },
 ];
 
-// Chart Data
+// Chart
 export const chartData = [
   { name: "T2", sale: 100 },
   { name: "T3", sale: 300 },

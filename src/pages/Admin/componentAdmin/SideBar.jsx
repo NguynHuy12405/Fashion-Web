@@ -1,4 +1,4 @@
-import { Handbag, LayoutDashboard, Menu, ReceiptText, Settings, Users } from "lucide-react";
+import { ArrowBigLeftDash, Handbag, LayoutDashboard, Menu, ReceiptText, Settings, Users } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
 
@@ -11,7 +11,8 @@ export default function SideBar() {
         { label: "Products", icon: <Handbag size={20} />, path: "/admin/products" },
         { label: "Orders", icon: <ReceiptText size={20} />, path: "/admin/orders" },
         { label: "Users", icon: <Users size={20} />, path: "/admin/users" },
-        { label: "Settings", icon: <Settings size={20} />, path: "/admin/settings" }
+        // { label: "Settings", icon: <Settings size={20} />, path: "/admin/settings" },
+        { label: "Back To Home", icon: <ArrowBigLeftDash size={20} />, path: "/" }
     ];
 
     return (
@@ -39,7 +40,6 @@ export default function SideBar() {
                         );
                     })}
                 </ul>
-                <Link to="/" className="flex items-center p-2">Back to Home</Link>
             </nav>
         </div>
     </>

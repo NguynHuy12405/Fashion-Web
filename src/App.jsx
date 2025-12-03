@@ -17,9 +17,8 @@ import ProductPage from "./pages/Products/ProductPage";
 import PublicLayout from "./Layouts/PublicLayout";
 import ManageProducts from "./pages/Admin/Pages/ProductsManage";
 import ManageOrders from "./pages/Admin/Pages/OrdersManage";
-import AddProductModal from "./pages/Admin/componentAdmin/AddProduct";
 import ProductDetail from "./pages/Products/ProductDetail";
-import OrdersPage from "./pages/Order/Order";
+import OrdersPage from "./pages/Order/OrdersPage";
 
 function App() {
   return (
@@ -51,9 +50,7 @@ function App() {
           <Route path="/admin" element={<AdminPage />}>
             <Route index element={ <DashboardManager /> } />
             <Route path="/admin/users" element={<UserManager />} />
-            <Route path="/admin/products" element={<ManageProducts />}>
-              <Route path="/admin/products/addProducts" element={ <AddProductModal /> } />
-            </Route>
+            <Route path="/admin/products" element={<ManageProducts />} />
             <Route path="/admin/orders" element={<ManageOrders />} />
           </Route>
         </Route>
