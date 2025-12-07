@@ -1,7 +1,11 @@
-import { Search, Edit, Trash2 } from 'lucide-react';
+import { User, Search, Edit, Trash2, BookUser, UserCog } from 'lucide-react';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import EditUser from '../componentAdmin/EditUser';
+import StatCard from '../../../components/StatCard';
+
+const STATUS_OPTIONS = ["Tất cả", "Admin", "User"];
+const PAGE_SIZE = 10;
 
 export default function UserManager() {
   const users = useAuthStore((s) => s.users);
@@ -9,8 +13,21 @@ export default function UserManager() {
   const deleteUser = useAuthStore((s) => s.deleteUser);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [rolesFilter, setRolesFilter] = useState("Tất cả");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  
+  // Lọc theo trạng thái
+  const filteredUser = useMemo(() => {
+    if (rolesFilter === "Tất cả") return users;
+    return users.filter(o => o.role === rolesFilter);
+  }, [users, rolesFilter]);
+
+  // Phân trang
+  const totalPages = Math.ceil(filteredUser.length / PAGE_SIZE);
+  const paginatedUsers = filteredUser.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   const handleEditClick = (user) => {
     setSelectedUser(user);
@@ -29,12 +46,19 @@ export default function UserManager() {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-start items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Quản lý người dùng</h1>
           <p className="text-sm text-gray-500 mt-1">Danh sách tất cả thành viên trong hệ thống</p>
         </div>
       </div>
+
+      {/* Thống kê */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <StatCard label="Tổng Người Dùng" value={users.length} icon={BookUser} color="bg-blue-500" />
+          <StatCard label="Tổng số Users" value={users.filter(u => u.role === "User").length} icon={User} color="bg-yellow-500" />
+          <StatCard label="Tổng số Admins" value={users.filter(u => u.role === "Admin").length} icon={UserCog} color="bg-green-500" />
+        </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-4 border-b border-gray-100 flex gap-4">
@@ -46,10 +70,10 @@ export default function UserManager() {
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             />
           </div>
-          <select className="px-4 py-2 border rounded-lg text-sm text-gray-600 focus:outline-none cursor-pointer">
-            <option>Tất cả quyền</option>
-            <option>Admin</option>
-            <option>User</option>
+          <select value={rolesFilter} onChange={(e) => setRolesFilter(e.target.value)} className="px-4 py-2 border rounded-lg text-sm text-gray-600 focus:outline-none cursor-pointer">
+            {STATUS_OPTIONS.map(roles => (
+            <option key={roles} value={roles}>{roles}</option>
+          ))}
           </select>
         </div>
 
@@ -64,54 +88,73 @@ export default function UserManager() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <img src={user.avatar} alt="" className="w-10 h-10 rounded-full border border-gray-200" />
-                      <div>
-                        <div className="font-medium text-gray-800">{user.name}</div>
-                        <div className="text-xs text-gray-500">{user.email}</div>
+              {paginatedUsers.map((user) => (
+                <React.Fragment key={user.id}>
+                  <tr className="hover:bg-gray-50 transition">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <img src={user.avatar} alt="" className="w-10 h-10 rounded-full border border-gray-200" />
+                        <div>
+                          <div className="font-medium text-gray-800">{user.name}</div>
+                          <div className="text-xs text-gray-500">{user.email}</div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-600">{user.role}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                      ${user.status === 'Active' ? 'bg-green-100 text-green-800' : 
-                        user.status === 'Inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800'}`}>
-                      {user.status === 'Active' ? 'Hoạt động' : user.status === 'Inactive' ? 'Ngoại tuyến' : 'Đã khóa'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button 
-                        onClick={() => handleEditClick(user)}
-                        className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition cursor-pointer"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteUser(user.id)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-gray-600">{user.role}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                        ${user.status === 'Active' ? 'bg-blue-100 text-blue-700' : 
+                          user.status === 'Inactive' ? 'bg-gray-200 text-gray-700' : 'bg-red-200 text-red-800'}`}>
+                        {user.status === 'Active' ? 'Hoạt động' : user.status === 'Inactive' ? 'Ngoại tuyến' : 'Đã khóa'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button 
+                          onClick={() => handleEditClick(user)}
+                          className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition cursor-pointer"
+                        >
+                          <Edit size={18} />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteUser(user.id)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
         </div>
         
+        {/* Pagination */}
         <div className="p-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
-          <span>Hiện Có Tổng User: {users.length}</span>
+          <span>
+            Trang {currentPage}/{totalPages} — Tổng {filteredUser.length} user
+          </span>
+
           <div className="flex gap-2">
-            <button className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 cursor-pointer" disabled>Trước</button>
-            <button className="px-3 py-1 border rounded hover:bg-gray-50 cursor-pointer">Sau</button>
+            <button
+              className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => prev - 1)}
+            >
+              Trước
+            </button>
+
+            <button
+              className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => prev + 1)}
+            >
+              Sau
+            </button>
           </div>
         </div>
       </div>

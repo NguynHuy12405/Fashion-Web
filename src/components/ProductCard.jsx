@@ -4,9 +4,9 @@ import { CreditCard, ShoppingCart, Star } from "lucide-react";
 import { useProductStore } from "../stores/useProductStore";
 
 export default function ProductCard({product}) {
+    
     const addToCart = useCartStore((state) => state.addToCart);
     const getCategoryName = useProductStore(s => s.getCategoryName);
-
 
   return (
     <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden flex flex-col group">

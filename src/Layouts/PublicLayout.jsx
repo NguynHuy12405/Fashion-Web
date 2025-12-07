@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import ChatWidget from "../components/ChatWidget";
+import ChatWidget from "../components/ChatBox/ChatWidget";
 
 export default function PublicLayout() {
   return (

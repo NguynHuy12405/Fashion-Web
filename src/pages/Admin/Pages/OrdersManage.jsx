@@ -4,21 +4,10 @@ import React, { useState, useMemo } from 'react';
 import OrderDetail from '../../Order/OrderDetail';
 import { useOrderStore } from '../../../stores/useOrderStore';
 import { useAuthStore } from '../../../stores/useAuthStore';
+import StatCard from '../../../components/StatCard';
 
 const STATUS_OPTIONS = ["Tất cả", "Đang xử lý", "Hoàn thành", "Đã hủy"];
 const PAGE_SIZE = 10;
-
-const StatCard = ({ label, value, icon: Icon, color }) => (
-  <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-    <div className={`p-3 rounded-lg ${color}`}>
-      <Icon size={20} className="text-white" />
-    </div>
-    <div>
-      <p className="text-gray-500 text-xs uppercase font-medium">{label}</p>
-      <h3 className="text-xl font-bold text-gray-800 mt-1">{value}</h3>
-    </div>
-  </div>
-);
 
 export default function ManageOrders()  {
   const user = useAuthStore((s) => s.user);
@@ -107,8 +96,8 @@ export default function ManageOrders()  {
                   <td className="px-6 py-4 font-semibold text-blue-600 hover:underline cursor-pointer">{order.id}</td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
-                      <span className="font-medium text-gray-800 text-sm">{order.customer}</span>
-                      <span className="text-xs text-gray-400">
+                      <span className={`font-semibold text-sm ${ order.status === "Đã hủy" ? "text-red-700" : order.status === "Hoàn thành" ? "text-blue-700" : "text-gray-700"}`}>{order.customer}</span>
+                      <span className="text-xs text-gray-500">
                         {order.userId ? "Tài khoản" : "Khách vãng lai"} {user?.role === "admin" && order.userId && `(ID: ${order.userId})`}
                       </span>
                     </div>

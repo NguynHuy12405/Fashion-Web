@@ -1,147 +1,208 @@
-import { useState, useEffect } from 'react';
 import { X, UploadCloud, Save } from 'lucide-react';
+import { useEffect } from 'react';
+import { useProductStore } from '../../../stores/useProductStore';
 import { useCategoryStore } from '../../../stores/useCategoryStore';
 
 export default function EditProduct({ isOpen, onClose, product, onSave }) {
-  const categories = useCategoryStore((s) => s.categories);
+  const {
+    formData,
+    images,
+    setFormData,
+    setImages,
+    removeImage,
+    resetForm,
+  } = useProductStore();
 
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [stock, setStock] = useState('');
-  const [category, setCategory] = useState('');
-  const [status, setStatus] = useState('active');
-  const [description, setDescription] = useState('');
-  const [imagePreview, setImagePreview] = useState(null);
+  const { loadCategories, categories } = useCategoryStore();
 
+  // Khi mở popup → load categories + đổ data vào form store
   useEffect(() => {
-    if (product) {
-      setName(product.name || '');
-      setPrice(product.price || '');
-      setStock(product.stock || '');
-      setCategory(product.category || (categories[0] ? categories[0].id : ''));
-      setStatus(product.status || 'active');
-      setDescription(product.description || '');
-      setImagePreview(product.img || null);
+    if (isOpen) {
+      loadCategories();
+
+      if (product) {
+        setFormData({
+          name: product.name,
+          price: product.price,
+          stock: product.stock,
+          categoryId: product.categoryId,
+          status: product.status,
+          description: product.description,
+        });
+
+        setImages(product.images || []);
+      }
     }
-  }, [product, categories]);
+  }, [isOpen, product]);
 
   if (!isOpen) return null;
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setImagePreview(URL.createObjectURL(file));
+  // Thay đổi input
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  // Chọn ảnh mới
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newImages = files.map((f) => URL.createObjectURL(f));
+    setImages([...images, ...newImages]);
+  };
+
+  // Lưu sản phẩm
+  const handleSubmitForm = (e) => {
     e.preventDefault();
+
     const updatedProduct = {
       ...product,
-      name,
-      price,
-      stock,
-      category,
-      status,
-      description,
-      img: imagePreview
+      ...formData,
+      price: Number(formData.price),
+      stock: Number(formData.stock),
+      images,
+      avatar: images[0] || null,
     };
+
     onSave(updatedProduct);
+
+    resetForm();
+    onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+        <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50/50">
           <h2 className="text-xl font-bold text-gray-800">Chỉnh sửa sản phẩm</h2>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full">
             <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Avatar / Image */}
+        <form onSubmit={handleSubmitForm} className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* HÌNH ẢNH */}
           <div className="space-y-4">
             <label className="block text-sm font-medium text-gray-700">Hình ảnh sản phẩm</label>
-                <label className={`border-2 border-dashed rounded-xl h-64 flex flex-col items-center justify-center cursor-pointer transition-all ${imagePreview ? 'border-blue-500 bg-blue-50/30' : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'}`}>
-                    {imagePreview ? (
-                    <div className="relative w-full h-full p-2">
-                        <img src={imagePreview} alt="Preview" className="w-full h-full object-contain rounded-lg" />
-                        <button type="button" onClick={(e) => { e.stopPropagation(); setImagePreview(null); }} className="absolute top-3 right-3 bg-white/80 p-1.5 rounded-full shadow-sm hover:text-red-500 cursor-pointer">
-                        <X size={16} />
-                        </button>
-                    </div>
-                    ) : (
-                    <>
-                        <div className="bg-blue-50 p-3 rounded-full mb-3 text-blue-600 transition-transform">
-                            <UploadCloud size={24} />
-                        </div>
-                        <p className="text-sm font-medium text-gray-700">Nhấn để tải ảnh lên</p>
-                        <p className="text-xs text-gray-400 mt-1">PNG, JPG (Tối đa 5MB)</p>
-                    </>
-                    )}
-                    <input 
-                        type="file" 
-                        className="hidden" 
-                        onChange={handleImageChange} 
-                        accept="image/*" 
-                    />
-                </label>
-            </div>
 
+            <label
+              className={`border-2 border-dashed rounded-xl h-64 flex flex-col items-center justify-center cursor-pointer transition-all ${
+                images.length
+                  ? 'border-blue-500 bg-blue-50/30'
+                  : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+              }`}
+            >
+              {images.length > 0 ? (
+                <div className="relative w-full h-full p-2">
+                  <img src={images[0]} alt="Preview" className="w-full h-full object-contain rounded-lg" />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeImage(0);
+                    }}
+                    className="absolute top-3 right-3 bg-white/80 p-1.5 rounded-full shadow-sm hover:text-red-500"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-blue-50 p-3 rounded-full mb-3 text-blue-600 transition-transform">
+                    <UploadCloud size={24} />
+                  </div>
+                  <p className="text-sm font-medium text-gray-700">Nhấn để tải ảnh lên</p>
+                  <p className="text-xs text-gray-400 mt-1">PNG, JPG (Tối đa 5MB)</p>
+                </>
+              )}
 
-          {/* Thông tin sản phẩm */}
+              <input type="file" className="hidden" multiple onChange={handleImageChange} accept="image/*" />
+            </label>
+
+            {images.length > 1 && (
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                {images.slice(1).map((img, index) => (
+                  <div key={index} className="relative group">
+                    <img src={img} className="w-full h-20 object-cover rounded-lg border" />
+
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index + 1)}
+                      className="absolute -top-2 -right-2 bg-white shadow p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                    >
+                      <X size={14} className="text-red-500" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* FORM */}
           <div className="space-y-4">
+            {/* NAME */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Tên sản phẩm</label>
-              <input 
+              <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg text-sm"
               />
             </div>
 
+            {/* PRICE + CATEGORY */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Giá bán</label>
-                <input 
+                <input
                   type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-lg text-sm"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
-                <select 
-                  value={category} 
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm bg-white"
+                <select
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-lg text-sm bg-white"
                 >
-                  {categories.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                  <option value="">Chọn danh mục</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
                   ))}
                 </select>
               </div>
             </div>
 
+            {/* STOCK + STATUS */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Số lượng kho</label>
-                <input 
+                <input
                   type="number"
-                  value={stock}
-                  onChange={(e) => setStock(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
+                  name="stock"
+                  value={formData.stock}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-lg text-sm"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
-                <select 
-                  value={status} 
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm bg-white"
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-lg text-sm bg-white"
                 >
                   <option value="active">Đang bán</option>
                   <option value="draft">Bản nháp</option>
@@ -150,23 +211,29 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
               </div>
             </div>
 
+            {/* DESCRIPTION */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả chi tiết</label>
-              <textarea 
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
                 rows="3"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm resize-none"
-              />
+                className="w-full px-4 py-2 border rounded-lg text-sm resize-none"
+              ></textarea>
             </div>
           </div>
         </form>
 
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-700 bg-white border rounded-lg hover:bg-gray-50 cursor-pointer">
+        <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
+          <button onClick={onClose} className="px-4 py-2 text-sm bg-white border rounded-lg hover:bg-gray-50">
             Hủy bỏ
           </button>
-          <button onClick={handleSubmit} className="cursor-pointer px-4 py-2 text-sm text-white bg-blue-600 rounded-lg flex items-center gap-2 hover:bg-blue-700">
+
+          <button
+            onClick={handleSubmitForm}
+            className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+          >
             <Save size={16} /> Lưu sản phẩm
           </button>
         </div>

@@ -7,11 +7,10 @@ export default function BtnSetting() {
     const [open, setOpen] = useState(false);
     const logout = useAuthStore((state) => state.logout);
 
-
   return (
     <>
         <button
-            onClick={() => setOpen(!open)} className="hover:opacity-60 hover:backdrop-brightness-50 transition p-2 rounded-full cursor-pointer"
+            onClick={() => setOpen(!open)} className="hover:opacity-60 hover:backdrop-brightness-50 transition p-2 rounded-full cursor-pointer z-50"
             title="Cài đặt"
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-settings-icon lucide-settings w-6 h-6 hover:text-[#ccc] transition-transform duration-500 ${ open ? "rotate-180" : "rotate-0"}`}>

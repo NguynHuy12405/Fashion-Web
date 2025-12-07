@@ -17,7 +17,7 @@ export default function ProductList({ titleProducts }) {
       const cate = categories.find((c) => c.id === p.categoryId);
       return {
         ...p,
-        categoryName: cate?.categoryName || "Không có",
+        categoryName: cate?.categoryName || "Không xác định",
       };
     });
   }, [products, categories]);

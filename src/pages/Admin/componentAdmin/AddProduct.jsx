@@ -1,43 +1,47 @@
-import { useState } from 'react';
-import { X, UploadCloud, Save } from 'lucide-react';
+import { X, UploadCloud, Save, Download } from 'lucide-react';
 import { useProductStore } from '../../../stores/useProductStore';
+import { useEffect } from 'react';
+import { useCategoryStore } from '../../../stores/useCategoryStore';
+import InputForm from "../../../components/InputForm";
+import TextareaForm from "../../../components/TextareaForm";
+import SelectForm from "../../../components/SelectForm";
 
 export default function AddProduct({ isOpen, onClose }) {
-  const { categories, addProduct } = useProductStore();
-  const [imagePreview, setImagePreview] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    stock: '',
-    categoryId: '',
-    status: 'active',
-    description: '',
-  });
+  const { addProduct, setFormData, setImages, formData, images, removeImage, resetForm } = useProductStore();
+  const { loadCategories, categories } = useCategoryStore();
+
+  useEffect(() => {
+    if (isOpen) loadCategories();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData({ [name]: value });
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    const newImages = files.map((f) => URL.createObjectURL(f));
+    setImages([...images, ...newImages]);
   };
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
+
     const newProduct = {
       id: Date.now(),
       ...formData,
       price: Number(formData.price),
-      avatar: imagePreview,
+      stock: Number(formData.stock),
+      images,
+      avatar: images[0] || null,
     };
+
     addProduct(newProduct);
+    resetForm();
     onClose();
-    setFormData({ name: '', price: '', stock: '', categoryId: '', status: 'active', description: '' });
-    setImagePreview(null);
   };
 
   return (
@@ -51,13 +55,28 @@ export default function AddProduct({ isOpen, onClose }) {
         </div>
 
         <form onSubmit={handleSubmitForm} className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* HÌNH ẢNH */}
           <div className="space-y-4">
             <label className="block text-sm font-medium text-gray-700">Hình ảnh sản phẩm</label>
-            <label className={`border-2 border-dashed rounded-xl h-64 flex flex-col items-center justify-center cursor-pointer transition-all ${imagePreview ? 'border-blue-500 bg-blue-50/30' : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'}`}>
-              {imagePreview ? (
+            <label
+              className={`border-2 border-dashed rounded-xl h-64 flex flex-col items-center justify-center cursor-pointer transition-all 
+              ${
+                images.length
+                  ? 'border-blue-500 bg-blue-50/30'
+                  : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+              }`}
+            >
+              {images.length > 0 ? (
                 <div className="relative w-full h-full p-2">
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-contain rounded-lg" />
-                  <button type="button" onClick={(e) => { e.stopPropagation(); setImagePreview(null); }} className="absolute top-3 right-3 bg-white/80 p-1.5 rounded-full shadow-sm hover:text-red-500">
+                  <img src={images[0]} alt="Preview" className="w-full h-full object-contain rounded-lg" />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeImage(0);
+                    }}
+                    className="absolute top-3 right-3 bg-white/80 p-1.5 rounded-full shadow-sm hover:text-red-500"
+                  >
                     <X size={16} />
                   </button>
                 </div>
@@ -70,64 +89,134 @@ export default function AddProduct({ isOpen, onClose }) {
                   <p className="text-xs text-gray-400 mt-1">PNG, JPG (Tối đa 5MB)</p>
                 </>
               )}
-              <input 
-                type="file" 
-                className="hidden" 
-                onChange={handleImageChange} 
-                accept="image/*" 
-              />
+
+              <input type="file" className="hidden" multiple onChange={handleImageChange} accept="image/*" />
             </label>
+
+            {images.length > 1 && (
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                {images.slice(1).map((img, index) => (
+                  <div key={index} className="relative group">
+                    <img src={img} className="w-full h-20 object-cover rounded-lg border" />
+
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index + 1)}
+                      className="absolute -top-2 -right-2 bg-white shadow p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                    >
+                      <X size={14} className="text-red-500" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-
-          {/* Thông tin sản phẩm */}
           <div className="space-y-4">
+            {/* NAME */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tên sản phẩm</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nhập Tên Sản Phẩm..." className="w-full px-4 py-2 border rounded-lg text-sm" />
+              <InputForm
+                label={"Tên sản phẩm"}
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Nhập tên sản phẩm..."
+                className="w-full px-4 py-2 border rounded-lg text-sm"
+              />
             </div>
 
+            {/* PRICE */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Giá bán</label>
-                <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="0" className="w-full px-4 py-2 border rounded-lg text-sm" />
+                <InputForm
+                  label={"Giá bán"}
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  placeholder="0"
+                  className="w-full px-4 py-2 border rounded-lg text-sm"
+                />
               </div>
+
+              {/* CATEGORY */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
-                <select name="categoryId" value={formData.categoryId} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg text-sm bg-white">
-                  <option value="">Chọn danh mục</option>
-                  {categories.map(c => <option key={c.id} value={c.id}>{c.categoryName}</option>)}
-                </select>
+                <SelectForm
+                  label="Danh mục"
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleChange}
+                  options={categories.map(c => ({
+                    value: c.id,
+                    label: c.name
+                  }))}
+                />
               </div>
             </div>
 
+            {/* STOCK + STATUS */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Số lượng kho</label>
-                <input type="number" name="stock" value={formData.stock} onChange={handleChange} placeholder="0" className="w-full px-4 py-2 border rounded-lg text-sm" />
+                <InputForm
+                  label={"Số lượng kho"}
+                  type="number"
+                  name="stock"
+                  value={formData.stock}
+                  onChange={handleChange}
+                  placeholder="0"
+                  className="w-full px-4 py-2 border rounded-lg text-sm"
+                />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
-                <select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg text-sm bg-white">
-                  <option value="active">Đang bán</option>
-                  <option value="draft">Bản nháp</option>
-                  <option value="out_stock">Hết hàng</option>
-                </select>
+                <SelectForm
+                  label="Trạng thái"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  options={[
+                    { value: "Còn hàng", label: "Còn hàng" },
+                    { value: "Sắp hết", label: "Sắp hết" },
+                    { value: "Hết hàng", label: "Hết hàng" }
+                  ]}
+                />
               </div>
             </div>
 
+            {/* DESCRIPTION */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả chi tiết</label>
-              <textarea name="description" value={formData.description} onChange={handleChange} rows="3" placeholder="Nhập mô tả..." className="w-full px-4 py-2 border rounded-lg text-sm resize-none"></textarea>
+              <TextareaForm
+                label={"Mô tả chi tiết"}
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows="3"
+                placeholder="Nhập mô tả..."
+                className="w-full px-4 py-2 border rounded-lg text-sm resize-none"
+              />
             </div>
           </div>
         </form>
 
-        <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium bg-white border rounded-lg hover:bg-gray-50 cursor-pointer" >Hủy bỏ</button>
-          <button onClick={handleSubmitForm} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 cursor-pointer rounded-lg hover:bg-blue-700 flex items-center gap-2">
-            <Save size={16} /> Lưu sản phẩm
+        {/* FOOTER */}
+        <div className="px-6 py-4 bg-gray-50 border-t flex justify-between items-center">
+          <button className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 flex items-center gap-2">
+            <Download size={20} /> Thêm file Excel
           </button>
+
+          <div className="flex gap-3">
+            <button onClick={onClose} className="px-4 py-2 text-sm font-medium bg-white border rounded-lg hover:bg-gray-50">
+              Hủy bỏ
+            </button>
+
+            <button
+              onClick={handleSubmitForm}
+              className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 flex items-center gap-2"
+            >
+              <Save size={16} /> Thêm sản phẩm
+            </button>
+          </div>
         </div>
       </div>
     </div>

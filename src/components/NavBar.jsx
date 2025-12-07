@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useCategoryStore } from "../stores/useCategoryStore";
 
 export default function NavBar() {
-    const categories = useCategoryStore((state) => state.categories);
+    const {categories, loadCategories } = useCategoryStore();
     const [open, setOpen] = useState(false);
     
+    useEffect(() => {
+        loadCategories();
+    }, [])
+
   return (
     <nav className="relative z-100">
         <ul className='flex space-x-6'>
@@ -30,7 +34,7 @@ export default function NavBar() {
                     {categories.map((cate) => (
                         <li key={cate.id} className="group relative p-1">
                             <Link to={`/category/${cate.id}`} className="hover:text-orange-200 transition">
-                                {cate.categoryName}
+                                {cate.name}
                                 <div className="absolute left-0 -bottom-1 h-0.5 w-0 bg-orange-400 transition-all duration-300 group-hover:w-full" />
                             </Link>
                         </li>

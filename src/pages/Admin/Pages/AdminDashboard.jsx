@@ -61,9 +61,19 @@ export default function DashboardManager() {
                         <h3 className="text-3xl font-bold text-gray-800">
                           {s.value}
                         </h3>
-                        <div className="flex items-center gap-1 mt-2 text-green-600 text-xs font-semibold">
-                          <TrendingUp size={14} />
-                          <span>+12% so với tháng trước</span>
+                        <div 
+                          className={`flex items-center gap-1 mt-2 text-xs font-semibold 
+                          ${s.percent >= 0 ? "text-green-600" : "text-red-600"}`}>
+                          
+                          <TrendingUp 
+                            size={14} 
+                            className={`${s.percent < 0 ? "rotate-180" : ""}`} 
+                          />
+
+                          <span>
+                            {s.percent >= 0 ? "+" : ""}
+                            {s.percent.toFixed(1)}% so với tháng trước
+                          </span>
                         </div>
                       </div>
 

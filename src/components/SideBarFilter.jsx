@@ -1,11 +1,16 @@
 import { Filter, Star } from "lucide-react";
 import { useCategoryStore } from "../stores/useCategoryStore";
+import { useEffect } from "react";
 
 export default function SideBarFilter() {
-    const categories = useCategoryStore((s) => s.categories);
+    const { categories, loadCategories } = useCategoryStore();
+
+    useEffect(() => {
+        loadCategories();
+    }, []);
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-4">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-4 text-black">
             <div className="flex items-center gap-2 mb-4 border-b pb-4">
                 <Filter className="text-orange-600" size={20} />
                 <h2 className="font-bold text-lg text-gray-800">Bộ Lọc</h2>
@@ -16,12 +21,12 @@ export default function SideBarFilter() {
                 <h3 className="font-semibold text-gray-700 mb-3">Danh mục</h3>
                 <ul className="space-y-2">
                     {categories.map((cat) => (
-                    <li key={cat.id}>
-                        <label className="flex items-center space-x-2 cursor-pointer group">
-                            <input type="checkbox" className="form-checkbox rounded text-orange-600 focus:ring-orange-500 h-4 w-4" />
-                            <span className="text-gray-600 group-hover:text-orange-600 transition-colors">{cat.categoryName}</span>
-                        </label>
-                    </li>
+                        <li key={cat.id}>
+                            <label className="flex items-center space-x-2 cursor-pointer group">
+                                <input type="checkbox" className="form-checkbox rounded text-orange-600 focus:ring-orange-500 h-4 w-4" />
+                                <span className="text-gray-600 group-hover:text-orange-600 transition-colors">{cat.name}</span>
+                            </label>
+                        </li>
                     ))}
                 </ul>
             </div>

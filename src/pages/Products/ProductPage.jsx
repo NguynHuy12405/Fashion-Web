@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useProductStore } from '../../stores/useProductStore';
 import Pagination from '../../components/Pagination';
 import SideBarFilter from '../../components/SideBarFilter';
 import ProductCard from '../../components/ProductCard';
-import { useProductStore } from '../../stores/useProductStore';
 
 
 export default function ProductPage() {
-    const products = useProductStore((s) => s.products)
-    const loadProducts = useProductStore((s) => s.loadProducts);
+    const { products, loadProducts } = useProductStore();
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(12);
 
@@ -36,7 +35,6 @@ export default function ProductPage() {
                 <main className="w-full lg:w-3/4">
                     <div className='flex justify-between items-center mb-4'>
                         <h1 className="text-3xl font-bold text-gray-800 mb-2">Tất cả sản phẩm</h1>
-                        <p className="text-gray-500 mb-2">Tìm thấy {products.length} sản phẩm chất lượng cho bạn</p>
                     </div>
                     
                     {/* Thanh công cụ sắp xếp (Optional) */}

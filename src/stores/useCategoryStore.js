@@ -1,41 +1,75 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { categories as MockCategories } from "../mockData/data";
+import categoryApi from "../api/categoryApi";
 
 export const useCategoryStore = create(
   devtools(
     persist(
       (set, get) => ({
-        categories: [...MockCategories],
+        categories: [],
+        loading: false,
 
-        // ===== CRUD =====
-        addCategory: (category) =>
-          set((state) => ({
-            categories: [...state.categories, category],
-          })),
+        // ===== LOAD FROM API =====
+        loadCategories: async () => {
+          set({ loading: true });
+          try {
+            const res = await categoryApi.getAll();
 
-        updateCategory: (id, newData) =>
-          set((state) => ({
-            categories: state.categories.map((cat) =>
-              cat.id === id ? { ...cat, ...newData } : cat
-            ),
-          })),
+            const formatted = res.map((c, i) => ({
+              id: i + 1,
+              slug: c.slug,
+              name: c.name,
+              url: c.url
+            }));
 
-        removeCategory: (id) =>
-          set((state) => ({
-            categories: state.categories.filter((cat) => cat.id !== id),
-          })),
+            set({ categories: formatted });
+          } catch (err) {
+            console.error("❌ Load categories error:", err);
+          } finally {
+            set({ loading: false });
+          }
+        },
 
-        clearCategories: () => set({ categories: [] }),
+        addCategory: async (newCategory) => {
+          try {
+            // await categoryApi.create(newCategory) ← API thật
+            set((state) => ({
+              categories: [...state.categories, newCategory],
+            }));
+          } catch (err) {
+            console.error("❌ Add category error:", err);
+          }
+        },
+
+        updateCategory: async (id, updatedData) => {
+          try {
+            // await categoryApi.update(id, updatedData)
+            set((state) => ({
+              categories: state.categories.map((cat) =>
+                cat.id === id ? { ...cat, ...updatedData } : cat
+              ),
+            }));
+          } catch (err) {
+            console.error("❌ Update category error:", err);
+          }
+        },
+
+        removeCategory: async (id) => {
+          try {
+            // await categoryApi.delete(id)
+            set((state) => ({
+              categories: state.categories.filter((cat) => cat.id !== id),
+            }));
+          } catch (err) {
+            console.error("❌ Delete category error:", err);
+          }
+        },
 
         // ===== SELECTORS =====
         getCategoryById: (id) => {
           return get().categories.find((cat) => cat.id === id);
         },
 
-        getCategoryCount: () => get().categories.length,
-
-        // Lọc category chứa tên (ví dụ cho search)
         searchCategories: (keyword) => {
           return get().categories.filter((c) =>
             c.name.toLowerCase().includes(keyword.toLowerCase())
@@ -43,7 +77,7 @@ export const useCategoryStore = create(
         },
       }),
       {
-        name: "category-store", // key của localStorage
+        name: "category-store",
       }
     )
   )
