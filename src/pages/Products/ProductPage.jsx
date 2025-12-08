@@ -25,7 +25,6 @@ export default function ProductPage() {
 
   return (
     <>
-        {/* Breadcrumb & Title */}
         <div className="text-black mx-auto px-4 pt-[30px] pb-8 min-h-screen bg-white flex flex-col ">
             <div className="flex flex-col lg:flex-row gap-8">
                 <aside className="w-full lg:w-1/4 shrink-0">

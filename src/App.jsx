@@ -19,6 +19,8 @@ import ManageProducts from "./pages/Admin/Pages/ProductsManage";
 import ManageOrders from "./pages/Admin/Pages/OrdersManage";
 import ProductDetail from "./pages/Products/ProductDetail";
 import OrdersPage from "./pages/Order/OrdersPage";
+import ContactUs from "./pages/ContactUs";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
   return (
@@ -33,16 +35,18 @@ function App() {
         {/* (Guest xem thoải mái) */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<DashBoard />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/about-us" element={<AboutUs />} />
           <Route path="/products" element={<ProductPage />} />
           <Route path="/products/:id" element={<ProductDetail />} />
         </Route>
 
         {/*  User (user + admin) */}
         <Route element={<UserLayout />}>
-          <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Route>
 
         {/*  Admin  */}

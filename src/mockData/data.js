@@ -120,3 +120,9 @@ export const stats = [
   }
 ];
 
+export const option_Price = [
+  { label: "Dưới 100k", max: 100000 },
+  { label: "Dưới 500k", max: 500000 },
+  { label: "500k - 1 triệu", min: 500000, max: 1000000 },
+  { label: "Trên 1 triệu", min: 1000000 }
+];

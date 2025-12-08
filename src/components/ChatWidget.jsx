@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { BotMessageSquare, X, Send, ShoppingBag, Loader2 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { useChatStore } from '../../stores/useChatStore';
-import { sendMessageToGemini } from '../../services/gemini';
+import { useChatStore } from '../stores/useChatStore';
+import { sendMessageToGemini } from '../services/gemini';
 
 
 const cn = (...inputs) => twMerge(clsx(inputs));
@@ -69,7 +69,7 @@ const handleSend = async (e) => {
 };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
+    <div className="fixed bottom-6 right-6 z-10 flex flex-col items-end font-sans">
       {/* Chat Window */}
       <div 
         className={cn(
@@ -94,7 +94,7 @@ const handleSend = async (e) => {
         </div>
 
         {/* Messages Body */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-white">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-white modern-scroll">
           {messages.map((msg) => (
             <div key={msg.id} className={cn("flex flex-col max-w-[85%]", msg.role === 'user' ? "ml-auto items-end" : "mr-auto items-start")}>
               <div 

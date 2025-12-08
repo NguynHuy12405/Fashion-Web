@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import ChatWidget from "../components/ChatBox/ChatWidget";
+import ChatWidget from "../components/ChatWidget";
 
 export default function PublicLayout() {
   return (
@@ -12,7 +12,7 @@ export default function PublicLayout() {
         <main className="grow pt-[70px]">
           <Outlet />
         </main>
-        <ChatWidget />
+        {/* <ChatWidget /> */}
       </div>
       
       <Footer />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { slider } from "../mockData/data";
 import { useNavigate } from "react-router";
+import ButtonLink from "./ButtonLink";
 
 export default function Slider() {
   const [index, setIndex] = useState(0);
@@ -14,7 +15,7 @@ export default function Slider() {
   };
 
   const handleTrans = () => {
-    navigate("/");
+    navigate("/products");
   };
 
   // Auto slide
@@ -56,16 +57,14 @@ export default function Slider() {
             className={`absolute inset-0 transition-transform duration-500 ease-in-out text-center ${position}`}
           >
             <img src={item.img} className="w-full h-full object-cover" />
-
-            {/* TEXT OVERLAY */}
             <div className="absolute right-10 md:right-12 bottom-12 z-20 text-white p-2 rounded-xl max-w-[75%]">
               <h2 className="text-xl md:text-3xl font-bold drop-shadow-lg">
                 {item.title}
               </h2>
-              <p className="mt-2 text-sm md:text-base drop-shadow-md">
+              <p className="mt-2 text-[18px] md:text-base drop-shadow-md">
                 {item.subtitle}
               </p>
-              <button onClick={handleTrans} className="my-3 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 transition-all cursor-pointer">Xem Chi Tiết</button>
+              <ButtonLink onClick={handleTrans} title="Mua Ngay" offIcon={false}/>
             </div>
           </div>
         );

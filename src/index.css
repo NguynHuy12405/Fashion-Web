@@ -10,3 +10,29 @@
   background-color: #242424;
 }
 
+.modern-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modern-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modern-scroll::-webkit-scrollbar-thumb {
+  background: #cfcfcf;
+  border-radius: 999px;
+}
+
+.modern-scroll::-webkit-scrollbar-thumb:hover {
+  background: #b4b4b4;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+}
+
