@@ -6,8 +6,8 @@ import { useProductStore } from "../stores/useProductStore";
 const IS_DEV_MODE = false; 
 
 const products = useProductStore.getState().products;
-const GEN_AI_KEY = "AIzaSyAiwPag56VQ2iRfxUuB6qiAdZ2C0llXKlQ";
-const genAI = new GoogleGenerativeAI(GEN_AI_KEY);
+
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI_KEY);
 
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
