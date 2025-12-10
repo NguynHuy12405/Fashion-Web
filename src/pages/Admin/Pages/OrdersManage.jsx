@@ -19,7 +19,7 @@ export default function ManageOrders()  {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Phân quyền
-  const orders = user?.role === "admin" ? getAllOrders() : getOrdersByCurrentUser();
+  const orders = user?.role === "Admin" ? getAllOrders() : getOrdersByCurrentUser();
 
   // Lọc theo trạng thái
   const filteredOrders = useMemo(() => {

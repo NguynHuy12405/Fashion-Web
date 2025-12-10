@@ -6,7 +6,7 @@ export default function AdminLayout() {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  if (user.role !== "admin") return <Navigate to="/forbidden-403" replace />;
+  if (user.role !== "Admin") return <Navigate to="/forbidden-403" replace />;
   
   return <Outlet />;
 }

@@ -52,7 +52,8 @@ loadProducts: async () => {
       description: p.description,
       rating: Number(p.rating) || 0,
       discountPercentage: Number(p.discountPercentage) || 0,
-      reviewCount: Array.isArray(p.reviews) ? p.reviews.length : 0
+      reviewCount: Array.isArray(p.reviews) ? p.reviews.length : 0,
+      reviews: Array.isArray(p.reviews) || [],
     }));
 
     set({ products: mapped });
@@ -92,6 +93,8 @@ loadProducts: async () => {
         image: p.thumbnail,
         images: p.images,
         description: p.description,
+        reviewCount: p.reviews.length,
+        reviews: p.reviews,
       };
 
       set({ productDetail: mapped });

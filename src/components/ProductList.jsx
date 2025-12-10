@@ -11,33 +11,36 @@ export default function ProductList({ titleProducts }) {
 
   useEffect(() => {
     loadProducts();
-  }, [loadProducts]);
+  }, []);
 
   const maxIndex = Math.max(products.length - showCount, 0);
 
-  const next = () => {
-    setIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
-
-  const prev = () => {
-    setIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  };
+  const next = () => setIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+  const prev = () => setIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
 
   const visibleProducts = products.slice(index, index + showCount);
 
   return (
-    <section className="pt-12 pb-4 bg-gray-50 text-black">
-      <h1 className="text-center text-4xl text-[#333] font-bold leading-6 mb-8">
+    <section className="pt-12 pb-4 bg-white text-black">
+      <h1 className="text-center text-4xl font-bold mb-10 text-black tracking-tight">
         {titleProducts}
       </h1>
 
       <div className="relative w-full px-4 mx-auto">
+
         {/* BUTTON PREV */}
         <button
           onClick={prev}
-          className="absolute -left-2 top-1/2 -translate-y-1/2 bg-gray-200 p-2 rounded-full shadow hover:bg-gray-100 z-10 hidden min-[768px]:block cursor-pointer"
+          className="
+            absolute -left-3 top-1/2 -translate-y-1/2 
+            bg-white border border-black/20 text-black
+            w-12 h-12 rounded-full
+            flex items-center justify-center
+            shadow-md hover:bg-[#D2B48C]/30 transition 
+            hidden min-[768px]:flex z-10 cursor-pointer
+          "
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={22} />
         </button>
 
         {/* PRODUCT LIST */}
@@ -46,10 +49,10 @@ export default function ProductList({ titleProducts }) {
             {visibleProducts.map((product) => (
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, x: 60 }}
+                initial={{ opacity: 0, x: 70 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -60 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
+                exit={{ opacity: 0, x: -70 }}
+                transition={{ duration: 0.38, ease: "easeOut" }}
               >
                 <ProductCard product={product} />
               </motion.div>
@@ -60,9 +63,16 @@ export default function ProductList({ titleProducts }) {
         {/* BUTTON NEXT */}
         <button
           onClick={next}
-          className="absolute -right-2 top-1/2 -translate-y-1/2 bg-gray-200 p-2 rounded-full shadow hover:bg-gray-100 z-10 hidden min-[768px]:block cursor-pointer"
+          className="
+            absolute -right-3 top-1/2 -translate-y-1/2 
+            bg-white border border-black/20 text-black
+            w-12 h-12 rounded-full
+            flex items-center justify-center
+            shadow-md hover:bg-[#D2B48C]/30 transition 
+            hidden min-[768px]:flex z-10 cursor-pointer
+          "
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={22} />
         </button>
       </div>
     </section>

@@ -7,14 +7,12 @@ export const useCategoryStore = create(
     persist(
       (set, get) => ({
         categories: {
-          "Thời Trang Nam": [],
-          "Thời Trang Nữ": [],
-          "Thời Trang Trẻ Em": [],
-          "Mỹ Phẩm & Làm Đẹp": [],
-          "Điện Tử & Công Nghệ": [],
-          "Nhà Cửa & Đời Sống": [],
-          "Thể Thao & Giải Trí": [],
-          "Sức Khỏe": [],
+          "Nam": [],
+          "Nữ": [],
+          "Trẻ Em": [],
+          "Mỹ Phẩm": [],
+          "Đời Sống": [],
+          "Thể Thao": [],
           "Phụ Kiện": [],
           "Khác": [],
         },
@@ -45,14 +43,12 @@ export const useCategoryStore = create(
             });
 
             const grouped = {
-              "Thời Trang Nam": [],
-              "Thời Trang Nữ": [],
-              "Thời Trang Trẻ Em": [],
-              "Mỹ Phẩm & Làm Đẹp": [],
-              "Điện Tử & Công Nghệ": [],
-              "Nhà Cửa & Đời Sống": [],
-              "Thể Thao & Giải Trí": [],
-              "Sức Khỏe": [],
+              "Nam": [],
+              "Nữ": [],
+              "Trẻ Em": [],
+              "Mỹ Phẩm": [],
+              "Đời Sống": [],
+              "Thể Thao": [],
               "Phụ Kiện": [],
               "Khác": [],
             };
@@ -61,23 +57,23 @@ export const useCategoryStore = create(
               const slug = (cate.slug || "").toLowerCase();
               const name = (cate.name || "").toLowerCase();
 
-              // Thời Trang Nam
+              // Nam
               if (
-                slug.includes("mens") ||
+                slug.includes("Mens") ||
                 slug.includes("men-") ||
                 name.includes("nam") ||
                 slug.match(/\b(shirts?|pants?|suits?|ties?)\b/)
               ) {
-                grouped["Thời Trang Nam"].push(cate);
+                grouped["Nam"].push(cate);
               }
-              // Thời Trang Nữ
+              // Nữ
               else if (
-                slug.includes("womens") ||
-                slug.includes("women-") ||
-                name.includes("nữ") ||
+                slug.includes("Womens") ||
+                slug.includes("Women-") ||
+                name.includes("Nữ") ||
                 slug.match(/\b(dresses?|skirts?|blouses?)\b/)
               ) {
-                grouped["Thời Trang Nữ"].push(cate);
+                grouped["Nữ"].push(cate);
               }
               // Trẻ Em
               else if (
@@ -87,42 +83,28 @@ export const useCategoryStore = create(
                 name.includes("trẻ em") ||
                 name.includes("bé")
               ) {
-                grouped["Thời Trang Trẻ Em"].push(cate);
+                grouped["Trẻ Em"].push(cate);
               }
               // Mỹ Phẩm & Làm Đẹp
               else if (
                 slug.match(/\b(beauty|cosmetic|makeup|skincare|fragrance|perfume)\b/) ||
                 name.match(/\b(mỹ phẩm|làm đẹp|son|phấn|nước hoa|dưỡng da)\b/)
               ) {
-                grouped["Mỹ Phẩm & Làm Đẹp"].push(cate);
-              }
-              // Điện Tử & Công Nghệ
-              else if (
-                slug.match(/\b(electronic|tech|phone|laptop|computer|gadget|camera)\b/) ||
-                name.match(/\b(điện thoại|máy tính|laptop|camera|tai nghe)\b/)
-              ) {
-                grouped["Điện Tử & Công Nghệ"].push(cate);
+                grouped["Mỹ Phẩm"].push(cate);
               }
               // Nhà Cửa & Đời Sống
               else if (
                 slug.match(/\b(home|furniture|kitchen|decor|garden)\b/) ||
                 name.match(/\b(nhà cửa|nội thất|bếp|trang trí|vườn)\b/)
               ) {
-                grouped["Nhà Cửa & Đời Sống"].push(cate);
+                grouped["Đời Sống"].push(cate);
               }
               // Thể Thao & Giải Trí
               else if (
                 slug.match(/\b(sport|fitness|outdoor|game|toy)\b/) ||
                 name.match(/\b(thể thao|gym|dụng cụ|đồ chơi)\b/)
               ) {
-                grouped["Thể Thao & Giải Trí"].push(cate);
-              }
-              // Sức Khỏe
-              else if (
-                slug.match(/\b(health|medical|vitamin|supplement|wellness)\b/) ||
-                name.match(/\b(sức khỏe|y tế|thuốc|vitamin)\b/)
-              ) {
-                grouped["Sức Khỏe"].push(cate);
+                grouped["Thể Thao"].push(cate);
               }
               // Phụ Kiện
               else if (

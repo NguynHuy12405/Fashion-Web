@@ -39,7 +39,7 @@ export const useAuthStore = create((set, get) => ({
       name,
       email,
       password,
-      role: "user",
+      role: "User",
       status: "Active",
       avatar: null,
     };

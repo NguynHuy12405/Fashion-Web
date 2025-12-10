@@ -1,70 +1,88 @@
-import { Link, useNavigate } from 'react-router';
-import { useAuthStore } from '../stores/useAuthStore';
-import { useCartStore } from '../stores/useCartStore';
-import NavBar from './NavBar';
-import BtnSetting from './BtnSetting';
-import { useState } from 'react';
+import { Link, useNavigate } from "react-router";
+import { useAuthStore } from "../stores/useAuthStore";
+import { useCartStore } from "../stores/useCartStore";
+import NavBar from "./NavBar";
+import { useState } from "react";
+import MenuDropdown from "./mobile/MenuDropdown";
+import HamburgerNav from "./mobile/HamburgerNav";
+import BtnSetting from "./Button/BtnSetting";
 
 export default function Header() {
   const totalItems = useCartStore((state) => state.getTotalItems());
   const user = useAuthStore((s) => s.user);
   const [search, setSearch] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  
+
   return (
-    <header className="bg-white fixed w-full  shadow-lg rounded-b-xl z-50">
-      <div className="mx-[120px] px-4 py-4 flex justify-between items-center leading-[1.6] text-black">
-        {/* logo */}
-        <div className='w-[30%] flex justify-start items-center'>
+    <header className="bg-[#ffffff] fixed w-full text-[#0a0d1a] shadow-lg z-50">
+      <div className="hidden md:flex mx-[120px] py-3 justify-between items-center max-[1024px]:mx-6">
+        {/* Logo */}
+        <div className="w-[20%] flex items-center">
           <Link to="/">
-            <h1 className="text-2xl font-bold text-orange-500">Logo Store</h1>
+            <h1 className="text-2xl font-bold">Logo Store</h1>
           </Link>
         </div>
+
         {/* Nav */}
-        <div className="flex justify-center items-center space-x-8 w-[40%]">
+        <div className="w-[50%] flex justify-center">
           <NavBar />
         </div>
-        {/* interact */}
-        <div className="flex justify-end items-center w-[30%]">
-          {/* search */}
-          <div className='relative'>
-            <div className='relative'>
-              <input className='border-2 px-2 py-1 rounded-2xl focus:outline-2 border-gray-200' type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Tìm Kiếm...' />
-              <button onClick={() => navigate("/products")} className='absolute left-42 bottom-1.5 cursor-pointer'>
-                <i className="fa-solid fa-magnifying-glass opacity-70" />
-              </button>
-            </div>
+
+        <div className="w-[30%] flex justify-end items-center gap-4">
+          {/* Search */}
+          <div className="relative">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="border-2 p-1.5 border-[#0a0d1a] bg-transparent"
+              placeholder="Tìm kiếm..."
+            />
+            <button
+              onClick={() => navigate("/products")}
+              className="absolute right-2 top-2 cursor-pointer"
+            >
+              <i className="fa-solid fa-magnifying-glass" />
+            </button>
           </div>
-          {/* cart */}
+
+          {/* Cart */}
           <div className="relative">
             <Link to="/cart">
-                <button className="px-4 py-2 rounded-full transition flex items-center cursor-pointer hover:opacity-50">
-                    <span className='text-[20px]'>
-                      <i className="fa-solid fa-basket-shopping text-black" />
-                    </span>
-                    {totalItems > 0 && (
-                        <span className="absolute right-0 top-1 left-[35px] text-black bg-gray-300 text-xs rounded-full w-3.5 h-3.5 flex items-center justify-center">
-                          {totalItems}
-                        </span>
-                    )}
-                </button>
+              <button className="pt-2 rounded-full hover:opacity-60 transition relative cursor-pointer">
+                <i className="fa-solid fa-basket-shopping text-xl" /> 
+                {totalItems > 0 && (
+                  <span className="absolute -right-2 -top-0.5 bg-gray-300 text-[#0a0d1a] text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
             </Link>
           </div>
-          {/* setting & login */}
-          <div className="relative">
-              {user ? (
-                <BtnSetting />
-              ) : (
-                <Link
-                  to="/login"
-                  className="bg-orange-400 hover:bg-orange-600 px-4 py-2 rounded-lg transition"
-                >
-                  Login
-                </Link>
-              )}
-          </div>
+
+          {/* Setting / Login */}
+          {user ? (
+            <BtnSetting />
+          ) : (
+            <Link
+              to="/login"
+              className="bg-[#0a0d1a] text-[#ffffff] hover:bg-[#D2B48C] hover:text-[#0a0d1a] px-2 py-1 transition duration-200"
+            >
+              Login
+            </Link>
+          )}
         </div>
       </div>
+
+      {/* ===== MOBILE ===== */}
+      <HamburgerNav
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+      />
+      {menuOpen && (
+        <MenuDropdown search={search} setSearch={setSearch} />
+      )}
     </header>
   );
 }

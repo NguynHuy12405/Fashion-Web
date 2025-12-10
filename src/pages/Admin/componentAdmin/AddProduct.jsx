@@ -2,9 +2,9 @@ import { X, UploadCloud, Save, Download } from 'lucide-react';
 import { useProductStore } from '../../../stores/useProductStore';
 import { useEffect } from 'react';
 import { useCategoryStore } from '../../../stores/useCategoryStore';
-import InputForm from "../../../components/InputForm";
-import TextareaForm from "../../../components/TextareaForm";
-import SelectForm from "../../../components/SelectForm";
+import InputForm from "../../../components/form/InputForm";
+import SelectForm from "../../../components/form/SelectForm";
+import TextareaForm from "../../../components/form/TextareaForm";
 
 export default function AddProduct({ isOpen, onClose }) {
   const { addProduct, setFormData, setImages, formData, images, removeImage, resetForm } = useProductStore();

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Instagram, Facebook, Twitter } from 'lucide-react';
-import ButtonLink from '../components/ButtonLink';
+import ButtonLink from '../components/Button/ButtonLink';
+
 
 export default function ContactSection () {
   const [formData, setFormData] = useState({

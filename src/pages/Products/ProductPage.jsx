@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useProductStore } from '../../stores/useProductStore';
 import Pagination from '../../components/Pagination';
-import SideBarFilter from '../../components/SideBarFilter';
 import ProductCard from '../../components/ProductCard';
+import SideBarFilter from '../../components/filter/SideBarFilter';
+import { AnimatePresence, motion } from 'framer-motion';
 
 
 export default function ProductPage() {
@@ -48,9 +49,19 @@ export default function ProductPage() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {currentProducts.map(product => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
+                        <AnimatePresence mode="popLayout">
+                            {currentProducts.map((product) => (
+                            <motion.div
+                                key={product.id}
+                                initial={{ opacity: 0, x: 60 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -60 }}
+                                transition={{ duration: 0.35, ease: "easeOut" }}
+                            >
+                                <ProductCard product={product} />
+                            </motion.div>
+                            ))}
+                        </AnimatePresence>
                     </div>
 
                     <Pagination

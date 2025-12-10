@@ -6,10 +6,7 @@ export default function DashBoard() {
   return (
     <>
       {/* SLIDER */}
-      <section className="mb-10">
-        <Slider />
-      </section>
-
+      <Slider />
       {/* PRODUCT SECTIONS */}
       <section className="mx-auto px-4 space-y-12">
         <ProductList titleProducts="Sản Phẩm Nổi Bật" />

@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  font-family: "Inter", sans-serif;
+  --color-black: #0a0d1a;
+  --color-white: #ffffff;
+  --color-be: #D2B48C;
+  --color-gray-dark: #333333;
+  --color-be-light: #E7D7BD;
 }
 
 .modern-scroll::-webkit-scrollbar {
@@ -19,12 +18,12 @@
 }
 
 .modern-scroll::-webkit-scrollbar-thumb {
-  background: #cfcfcf;
+  background: #D2B48C;
   border-radius: 999px;
 }
 
 .modern-scroll::-webkit-scrollbar-thumb:hover {
-  background: #b4b4b4;
+  background: #D2B48C;
 }
 
 ::-webkit-scrollbar {
@@ -32,7 +31,24 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.12);
+  background: #8f7757;
   border-radius: 999px;
 }
 
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
+
+.animate-zoomIn {
+  animation: zoomIn 0.35s cubic-bezier(.4,0,.2,1);
+}

@@ -20,7 +20,6 @@ import ManageOrders from "./pages/Admin/Pages/OrdersManage";
 import ProductDetail from "./pages/Products/ProductDetail";
 import OrdersPage from "./pages/Order/OrdersPage";
 import ContactUs from "./pages/ContactUs";
-import AboutUs from "./pages/AboutUs";
 
 function App() {
   return (
@@ -36,7 +35,6 @@ function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<DashBoard />} />
           <Route path="/contact-us" element={<ContactUs />} />
-          <Route path="/about-us" element={<AboutUs />} />
           <Route path="/products" element={<ProductPage />} />
           <Route path="/products/:id" element={<ProductDetail />} />
         </Route>

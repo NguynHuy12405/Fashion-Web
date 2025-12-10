@@ -2,11 +2,10 @@ export default function Pagination({
   productsPerPage,
   totalProducts,
   paginate,
-  currentPage
+  currentPage,
 }) {
   const totalPages = Math.ceil(totalProducts / productsPerPage);
 
-  // Helper tạo danh sách trang với dấu "..."
   const getPageList = () => {
     let pages = [];
 
@@ -34,20 +33,27 @@ export default function Pagination({
 
   return (
     <div className="flex justify-center mt-10 gap-2">
+
       <button
         disabled={currentPage === 1}
         onClick={() => paginate(currentPage - 1)}
-        className={`px-3 py-1 rounded-lg border-gray-200 text-sm cursor-pointer
-        ${currentPage === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-50"}`}
+        className={`
+          px-4 py-2 rounded-xl text-sm border border-black/20 
+          transition-all duration-200
+          ${currentPage === 1 
+            ? "opacity-30 cursor-not-allowed" 
+            : "hover:bg-[#D2B48C]/20"
+          }
+        `}
       >
-        Sau
+        Trước
       </button>
 
-      {pageList.map((page, index) => (
+      {pageList.map((page, index) =>
         page === "..." ? (
-          <div 
-            key={`dots-${index}`} 
-            className="px-3 py-1 text-gray-400 select-none"
+          <div
+            key={`dots-${index}`}
+            className="px-3 py-2 text-black/40 select-none"
           >
             ...
           </div>
@@ -55,23 +61,33 @@ export default function Pagination({
           <button
             key={`page-${page}`}
             onClick={() => paginate(page)}
-            className={`w-10 h-10 rounded-lg font-medium transition-all duration-200 cursor-pointer flex items-center justify-center
-              ${currentPage === page
-                ? "bg-orange-600 text-white shadow-md scale-105"
-                : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"}`}
+            className={`
+              w-10 h-10 rounded-xl font-medium transition-all duration-200 flex items-center justify-center border
+              ${
+                currentPage === page
+                  ? "bg-black text-[#D2B48C] border-black shadow-[0_4px_10px_rgba(0,0,0,0.25)] scale-105"
+                  : "bg-white text-black border-black/20 hover:bg-[#D2B48C]/20"
+              }
+            `}
           >
             {page}
           </button>
         )
-      ))}
+      )}
 
       <button
         disabled={currentPage === totalPages}
         onClick={() => paginate(currentPage + 1)}
-        className={`px-3 py-1 rounded-lg border-gray-200 text-sm cursor-pointer
-        ${currentPage === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-50"}`}
+        className={`
+          px-4 py-2 rounded-xl text-sm border border-black/20
+          transition-all duration-200
+          ${currentPage === totalPages 
+            ? "opacity-30 cursor-not-allowed" 
+            : "hover:bg-[#D2B48C]/20"
+          }
+        `}
       >
-        Trước
+        Sau
       </button>
     </div>
   );

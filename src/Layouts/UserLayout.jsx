@@ -9,14 +9,14 @@ export default function UserLayout() {
   if (!user) return <Navigate to="/login" state={{ from: location.pathname }} replace />;
 
   return (
-    <>
+    <div className="bg-[#ffffff]">
       <Header />
-      <div className="min-h-screen bg-white flex flex-col pb-8 my-auto">\
-        <main className="grow pt-[70px]">
+      <div className="min-h-screen flex flex-col pb-8 my-auto">
+        <main className="grow pt-[60px]">
           <Outlet />
         </main>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }

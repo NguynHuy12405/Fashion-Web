@@ -1,68 +1,40 @@
+import { Link } from "react-router";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useCartStore } from "../../stores/useCartStore";
+import BtnSetting from "../Button/BtnSetting";
 
-// export default function HamburgerNav() {
-//   return (
-//     <div
-//         className={`fixed top-0 left-0 w-64 h-full bg-white shadow-lg transform transition-transform duration-300 z-50
-//         ${openMenu ? "translate-x-0" : "-translate-x-full"}`}
-//       >
-//         <div className="flex justify-between items-center px-4 py-3 border-b">
-//           <span className="font-bold text-lg">Menu</span>
-//           <button onClick={() => setOpenMenu(false)}>
-//             <X size={24} />
-//           </button>
-//         </div>
+export default function HamburgerNav({ setMenuOpen, menuOpen }) {
+    const totalItems = useCartStore((state) => state.getTotalItems());
+    const user = useAuthStore((s) => s.user);
 
-//         <ul className="px-2 py-4 space-y-2 overflow-y-auto h-full">
-//           <li>
-//             <Link to="/" onClick={() => setOpenMenu(false)} className="block p-2 hover:bg-orange-100 rounded">
-//               Trang chủ
-//             </Link>
-//           </li>
+    return (
+        <div className="flex md:hidden px-4 py-3 justify-between items-center">
+            <button onClick={() => setMenuOpen(!menuOpen)}>
+                <i className="fa-solid fa-bars text-2xl"></i>
+            </button>
 
-//           {loading && <li className="p-2 text-sm text-gray-500">Đang tải...</li>}
-//           {!loading &&
-//             Object.keys(categories).map((group) => {
-//               const items = categories[group];
-//               if (!Array.isArray(items) || items.length === 0) return null;
-//               return (
-//                 <li key={group}>
-//                   <h4 className="text-gray-500 text-sm font-semibold mb-1 pl-1">{group}</h4>
-//                   <ul>
-//                     {items.map((cate) => (
-//                       <li key={cate.id}>
-//                         <Link
-//                           to={`/category/${cate.slug}`}
-//                           onClick={() => setOpenMenu(false)}
-//                           className="block p-2 hover:bg-orange-100 rounded"
-//                         >
-//                           {cate.name}
-//                         </Link>
-//                       </li>
-//                     ))}
-//                   </ul>
-//                 </li>
-//               );
-//             })}
+            <Link to="/">
+                <h1 className="text-xl font-bold tracking-wide">Logo</h1>
+            </Link>
 
-//           <li>
-//             <Link to="/about-us" onClick={() => setOpenMenu(false)} className="block p-2 hover:bg-orange-100 rounded">
-//               Về chúng tôi
-//             </Link>
-//           </li>
-//           <li>
-//             <Link to="/contact-us" onClick={() => setOpenMenu(false)} className="block p-2 hover:bg-orange-100 rounded">
-//               Liên Hệ
-//             </Link>
-//           </li>
-//         </ul>
+            <div className="flex items-center gap-4">
+                <Link to="/cart" className="relative">
+                    <i className="fa-solid fa-basket-shopping text-xl"></i>
+                    {totalItems > 0 && (
+                        <span className="absolute -right-2 -top-1 bg-gray-300 text-black text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                        {totalItems}
+                        </span>
+                    )}
+                </Link>
 
-//         {/* Overlay khi mở menu mobile */}
-//       {openMenu && (
-//         <div
-//           className="fixed inset-0 bg-black opacity-30 z-40"
-//           onClick={() => setOpenMenu(false)}
-//         />
-//       )}
-//       </div>
-//   )
-// }
+                {user ? (
+                    <BtnSetting />
+                ) : (
+                    <Link to="/login">
+                        <i className="fa-solid fa-user text-xl"></i>
+                    </Link>
+                )}
+            </div>
+        </div>
+    )
+}
