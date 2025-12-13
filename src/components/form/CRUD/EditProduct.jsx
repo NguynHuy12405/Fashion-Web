@@ -2,6 +2,7 @@ import { X, UploadCloud, Save } from 'lucide-react';
 import { useEffect } from 'react';
 import { useProductStore } from '../../../stores/useProductStore';
 import { useCategoryStore } from '../../../stores/useCategoryStore';
+import SelectForm from '../SelectForm';
 
 export default function EditProduct({ isOpen, onClose, product, onSave }) {
   const {
@@ -12,10 +13,10 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
     removeImage,
     resetForm,
   } = useProductStore();
+  const { loadCategories, getFlatCategories } = useCategoryStore();
+  const categories = getFlatCategories();
 
-  const { loadCategories, categories } = useCategoryStore();
 
-  // Khi mở popup → load categories + đổ data vào form store
   useEffect(() => {
     if (isOpen) {
       loadCategories();
@@ -25,7 +26,7 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
           name: product.name,
           price: product.price,
           stock: product.stock,
-          categoryId: product.categoryId,
+          category: product.category,
           status: product.status,
           description: product.description,
         });
@@ -37,9 +38,7 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
 
   if (!isOpen) return null;
 
-  // Thay đổi input
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (name, value) => {
     setFormData({ [name]: value });
   };
 
@@ -64,17 +63,16 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
     };
 
     onSave(updatedProduct);
-
     resetForm();
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden">
+      <div className="bg-[#ffffff] w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden">
         <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50/50">
           <h2 className="text-xl font-bold text-gray-800">Chỉnh sửa sản phẩm</h2>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full">
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full cursor-pointer">
             <X size={20} />
           </button>
         </div>
@@ -101,7 +99,7 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
                       e.stopPropagation();
                       removeImage(0);
                     }}
-                    className="absolute top-3 right-3 bg-white/80 p-1.5 rounded-full shadow-sm hover:text-red-500"
+                    className="absolute top-3 right-3 bg-[#ffffff]/80 p-1.5 rounded-full shadow-sm hover:text-red-500 cursor-pointer"
                   >
                     <X size={16} />
                   </button>
@@ -128,7 +126,7 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
                     <button
                       type="button"
                       onClick={() => removeImage(index + 1)}
-                      className="absolute -top-2 -right-2 bg-white shadow p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                      className="absolute -top-2 -right-2 bg-[#ffffff] shadow p-1 rounded-full opacity-0 group-hover:opacity-100 transition cursor-pointer"
                     >
                       <X size={14} className="text-red-500" />
                     </button>
@@ -166,20 +164,16 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
-                <select
-                  name="categoryId"
-                  value={formData.categoryId}
+                <SelectForm
+                  label="Danh mục"
+                  name="category"
+                  value={formData.category}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg text-sm bg-white"
-                >
-                  <option value="">Chọn danh mục</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  options={categories.map(c => ({
+                    value: c.slug,
+                    label: c.name
+                  }))}
+                />
               </div>
             </div>
 
@@ -202,7 +196,7 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg text-sm bg-white"
+                  className="w-full px-4 py-2 border rounded-lg text-sm bg-[#ffffff]"
                 >
                   <option value="active">Đang bán</option>
                   <option value="draft">Bản nháp</option>
@@ -226,13 +220,13 @@ export default function EditProduct({ isOpen, onClose, product, onSave }) {
         </form>
 
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 text-sm bg-white border rounded-lg hover:bg-gray-50">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-[#ffffff] bg-[#0a0d1a] rounded-lg hover:bg-[#D2B48C] hover:text-[#ffffff] cursor-pointer">
             Hủy bỏ
           </button>
 
           <button
             onClick={handleSubmitForm}
-            className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+            className="px-4 py-2 text-sm text-[#ffffff] bg-[#0a0d1a] rounded-lg hover:bg-[#D2B48C] hover:text-[#ffffff] flex items-center gap-2 cursor-pointer"
           >
             <Save size={16} /> Lưu sản phẩm
           </button>

@@ -1,6 +1,6 @@
-import Chart from "../../../components/Chart";
-import { stats } from "../../../mockData/data";
 import { DollarSign, ShoppingBag, Users, Activity, TrendingUp } from 'lucide-react';
+import Chart from "../../../components/chart/Chart";
+import { stats } from "../../../mockData/data";
 
 export default function DashboardManager() {
 

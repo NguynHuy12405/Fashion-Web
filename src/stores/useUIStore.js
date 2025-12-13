@@ -5,16 +5,18 @@ export const useUIStore = create((set) => ({
   isAddOpen: false,
   isEditOpen: false,
   selectedProduct: null,
+  selectedUser: null,
 
   toggleAddModal: (open) => set({ isAddOpen: open }),
   toggleEditModal: (open) => set({ isEditOpen: open }),
   setSelectedProduct: (product) => set({ selectedProduct: product }),
+  setSelectedUser: (user) => set({ selectedUser: user }),
 
   // ===== FILTER =====
-  productFilter: "Tất cả",
+  statusFilter: "Tất cả",
   searchKeyword: "",
 
-  setProductFilter: (filter) => set({ productFilter: filter }),
+  setStatusFilter: (filter) => set({ statusFilter: filter }),
   setSearchKeyword: (value) => set({ searchKeyword: value }),
 
   // ===== PAGINATION =====

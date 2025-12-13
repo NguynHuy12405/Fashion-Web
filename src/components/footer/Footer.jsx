@@ -47,7 +47,7 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-medium mb-4 text-white tracking-wide">Hỗ trợ</h4>
             <ul className="space-y-3 text-gray-400">
-              <li><Link to="/" className="hover:text-white transition">Liên hệ</Link></li>
+              <li><Link to="/contact-us" className="hover:text-white transition">Liên hệ</Link></li>
               <li><Link to="/" className="hover:text-white transition">FAQ</Link></li>
               <li><Link to="/" className="hover:text-white transition">Chính sách</Link></li>
               <li><Link to="/" className="hover:text-white transition">Bảo hành</Link></li>

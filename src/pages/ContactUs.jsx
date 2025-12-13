@@ -17,7 +17,6 @@ export default function ContactSection () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Xử lý logic gửi form ở đây
     console.log('Form submitted:', formData);
     alert('Cảm ơn bạn! Chúng tôi đã nhận được tin nhắn.');
   };
@@ -88,7 +87,6 @@ export default function ContactSection () {
             </div>
           </div>
 
-          {/* CỘT 2: Form điền thông tin (Clean & Minimal) */}
           <div className="w-full lg:w-7/12 flex flex-col justify-center">
             <h3 className="text-2xl font-inter font-bold text-black mb-2">Gửi tin nhắn</h3>
             <p className="text-gray-500 text-sm mb-8">Vui lòng điền vào biểu mẫu, chúng tôi sẽ phản hồi trong 24h.</p>

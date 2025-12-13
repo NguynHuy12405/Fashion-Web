@@ -1,20 +1,26 @@
-import { Outlet } from "react-router";
-import ChatWidget from "../components/ChatWidget";
+import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router";
 import Footer from "../components/footer/Footer";
 import Header from "../components/header/Header";
 
-
 export default function PublicLayout() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  }, [pathname]);
+
   return (
-    <div className="bg-[#ffffff]">
+    <div className="min-h-screen flex flex-col bg-white font-sans text-[#0a0d1a]">
       <Header />
 
-      <div className="min-h-screen flex flex-col pb-8 my-auto">
-        <main className="grow pt-[60px]">
-          <Outlet />
-        </main>
-        {/* <ChatWidget /> */}
-      </div>
+      <main className="grow pt-[120px] md:pt-[164px] flex flex-col animate-fade-in">
+        <Outlet />
+      </main>
       
       <Footer />
     </div>

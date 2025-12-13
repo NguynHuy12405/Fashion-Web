@@ -1,20 +1,20 @@
 import { useEffect, useMemo } from "react";
 import { Plus, Edit2, Trash, Search } from "lucide-react";
 import { useProductStore } from "../../../stores/useProductStore";
-import StatusBadge from "../../../components/card/StatusBadge";
+import StatusBadge from "../../../components/stat/StatusBadge";
 import AddProduct from "../../../components/form/CRUD/AddProduct";
 import EditProduct from "../../../components/form/CRUD/EditProduct";
 import { useUIStore } from "../../../stores/useUIStore";
+import Pagination from "../../../components/pagination/Pagination";
 
 const STATUS_OPTIONS = ["Tất cả", "Còn hàng", "Sắp hết", "Hết hàng"];
 const PAGE_SIZE = 10;
 
 export default function ManageProducts() {
   const { products, loadProducts, updateProduct } = useProductStore();
-
   const {
-    productFilter,
-    setProductFilter,
+    statusFilter,
+    setStatusFilter,
     currentPage,
     setCurrentPage,
     isAddOpen,
@@ -27,9 +27,9 @@ export default function ManageProducts() {
 
 
   const filteredProduct = useMemo(() => {
-    if (productFilter === "Tất cả") return products;
-    return products.filter(p => p.status === productFilter);
-  }, [products, productFilter]);
+    if (statusFilter === "Tất cả") return products;
+    return products.filter(p => p.status === statusFilter);
+  }, [products, statusFilter]);
 
   // Phân trang
   const totalPages = Math.ceil(filteredProduct.length / PAGE_SIZE);
@@ -37,6 +37,11 @@ export default function ManageProducts() {
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
+
+  const handlePaginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   useEffect(() => {
     loadProducts();
@@ -54,7 +59,7 @@ export default function ManageProducts() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [productFilter, setCurrentPage]);
+  }, [statusFilter, setCurrentPage]);
 
   // Mở popup chỉnh sửa
   const handleEditClick = (product) => {
@@ -82,7 +87,7 @@ export default function ManageProducts() {
 
         <button
           onClick={() => toggleAddModal(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl shadow-sm transition-all text-sm font-medium cursor-pointer"
+          className="flex items-center gap-2 text-[#ffffff] bg-[#0a0d1a] hover:bg-[#D2B48C] hover:text-[#0a0d1a] px-5 py-2.5 rounded-xl shadow-sm transition-all text-sm font-medium cursor-pointer"
         >
           <Plus size={18} /> Thêm sản phẩm
         </button>
@@ -99,7 +104,7 @@ export default function ManageProducts() {
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             />
           </div>
-          <select value={productFilter} onChange={(e) => setProductFilter(e.target.value)} className="px-4 py-2 border rounded-lg text-sm text-gray-600 focus:outline-none cursor-pointer">
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-2 border rounded-lg text-sm text-gray-600 focus:outline-none cursor-pointer">
             {STATUS_OPTIONS.map(status => (
               <option key={status} value={status}>{status}</option>
             ))}
@@ -157,12 +162,12 @@ export default function ManageProducts() {
                   <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleEditClick(item)}
-                      className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                      className="p-2 text-gray-500 hover:text-[#D2B48C] hover:bg-[#E7D7BD] rounded-lg transition-colors cursor-pointer"
                     >
                       <Edit2 size={16} />
                     </button>
 
-                    <button className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer">
+                    <button className="p-2 text-gray-500 hover:text-[#D2B48C] hover:bg-[#E7D7BD] rounded-lg transition-colors cursor-pointer">
                       <Trash size={16} />
                     </button>
                   </div>
@@ -173,28 +178,8 @@ export default function ManageProducts() {
         </table>
         
         {/* Pagination */}
-        <div className="p-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
-          <span>
-            Trang {currentPage}/{totalPages} — Tổng {filteredProduct.length} user
-          </span>
-
-          <div className="flex gap-2">
-            <button
-              className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            >
-              Trước
-            </button>
-
-            <button
-              className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-            >
-              Sau
-            </button>
-          </div>
+        <div className="p-4 border-t border-gray-100 flex justify-center items-center text-sm text-gray-500">
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePaginate} />
         </div>
       </div>
 

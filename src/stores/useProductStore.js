@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import productApi from "../api/productApi";
-import categoryApi from "../api/categoryApi";
 
 export const useProductStore = create((set, get) => ({
   // ===== DATA =====
@@ -10,7 +9,7 @@ export const useProductStore = create((set, get) => ({
 
   // ===== NEW: API PAGINATION =====
   page: 1,
-  limit: 9,
+  limit: 12,
   total: 0,
   category: null,
   loading: false,
@@ -20,7 +19,7 @@ export const useProductStore = create((set, get) => ({
     name: "",
     price: "",
     stock: "",
-    categoryId: "",
+    category: "",
     status: "Còn hàng",
     description: "",
   },
@@ -74,18 +73,6 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
-  // ===== CATEGORY =====
-  loadCategories: async () => {
-    const data = await categoryApi.getAll();
-    set({
-      categories: data.map((slug, index) => ({
-        id: index + 1,
-        slug,
-        name: slug.charAt(0).toUpperCase() + slug.slice(1),
-      })),
-    });
-  },
-
   // ===== DETAIL =====
   loadProductDetail: async (id) => {
     const p = await productApi.getById(id);
@@ -95,6 +82,7 @@ export const useProductStore = create((set, get) => ({
         name: p.title,
         price: p.price,
         stock: p.stock ?? 10,
+        quantity: p.quantity ?? 10,
         category: p.category,
         image: p.thumbnail,
         images: p.images,

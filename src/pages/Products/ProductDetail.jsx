@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Star, ShoppingCart, Heart, Minus, Plus, Truck, ShieldCheck } from "lucide-react";
+import { Star, ShoppingBag, Heart, Minus, Plus, Truck, ShieldCheck, ArrowLeft, Share2, ZoomIn, X } from "lucide-react";
 import { useProductStore } from "../../stores/useProductStore";
-import { useParams } from "react-router";
-import ReviewSection from "../../components/ReviewSection";
+import { useParams, Link } from "react-router";
+import ReviewSection from "../../components/reviews/ReviewSection";
 import AddReviewForm from "../../components/form/AddReviewForm";
 
 export default function ProductDetail() {
@@ -24,155 +24,171 @@ export default function ProductDetail() {
     loadProductDetail(Number(id));
   }, [id]);
 
-  if (!detail) return <p>Không tìm thấy sản phẩm</p>;
+  if (!detail) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-pulse text-[#D2B48C] tracking-widest uppercase">Loading Product...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg border border-black/10 overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2">
+    <div className="min-h-screen bg-white text-[#0a0d1a] font-sans pb-20">
+      <div className="pt-8 pb-4 px-4 md:px-8 border-b border-gray-100 sticky top-0 bg-white/90 backdrop-blur-md z-30">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <Link to="/" className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-[#0a0d1a] transition-colors">
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform"/>
+                Back to Collection
+            </Link>
+            <button className="text-gray-400 hover:text-[#D2B48C] transition-colors cursor-pointer">
+                <Share2 size={20} strokeWidth={1.5} />
+            </button>
+        </div>
+      </div>
 
-          {/* IMAGE COLUMN */}
-          <div className="p-8 flex flex-col items-center border-r border-black/10 bg-white">
-            {/* ZOOM MODAL */}
-            <div
-              onClick={() => setIsZoomOpen(true)}
-              className="w-full aspect-square mb-6 rounded-xl overflow-hidden bg-[#f7f7f7] relative
-              group cursor-zoom-in shadow-sm hover:shadow-lg transition-all duration-300"
-            >
-              <img
-                src={detail.images[selectedImage]}
-                alt="Main product"
-                className="w-full h-full object-cover rounded-xl
-                transition-transform duration-700 ease-[cubic-bezier(.4,0,.2,1)]
-                group-hover:scale-110"
-              />
-
-              {/* OVERLAY NHẸ */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-500"></div>
+      <div className="max-w-7xl mx-auto px-4 md:px-8 pt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20">
+          {/* 2. IMAGE GALLERY */}
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <div className="relative bg-gray-50 aspect-1 overflow-hidden group cursor-zoom-in" onClick={() => setIsZoomOpen(true)}>
+                <img
+                    src={detail.images[selectedImage]}
+                    alt={detail.name}
+                    className="w-full h-auto object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+                />
+                <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur px-3 py-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <ZoomIn size={14} /> Zoom
+                </div>
             </div>
 
-            {isZoomOpen && (
-              <div 
-                onClick={() => setIsZoomOpen(false)}
-                className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center 
-                z-[9999] cursor-zoom-out animate-fadeIn"
-              >
-                <img 
-                  src={detail.images[selectedImage]}
-                  className="max-w-4xl max-h-[80vh] object-contain rounded-lg shadow-2xl 
-                  animate-zoomIn"
-                />
-              </div>
-            )}
-
-            {/* Thumbnail List */}
-            <div className="flex gap-4 overflow-x-auto w-full pb-2 justify-center">
+            {/* Thumbnails */}
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-4">
               {detail.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`w-20 h-20 rounded-lg border-2 overflow-hidden shrink-0 transition-all
-                    ${
-                      selectedImage === idx
-                        ? "border-black shadow-md"
-                        : "border-black/20 hover:border-black"
-                    }`}
+                  className={`aspect-square overflow-hidden bg-gray-50 transition-all duration-300 relative ${
+                    selectedImage === idx ? "opacity-100 ring-1 ring-[#0a0d1a]" : "opacity-60 hover:opacity-100"
+                  }`}
                 >
                   <img src={img} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
+                  {selectedImage === idx && <div className="absolute inset-0 bg-[#0a0d1a]/5"></div>}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* INFO COLUMN */}
-          <div className="p-8 md:p-12 flex flex-col">
+          <div className="lg:col-span-5 relative">
+            <div className="sticky top-24">
+                {/* Category / Rating */}
+                <div className="flex items-center justify-between mb-4">
+                    <span className="text-[#D2B48C] text-xs font-bold uppercase tracking-[0.2em]">New Arrival</span>
+                    <div className="flex items-center gap-1 text-gray-400">
+                        <Star size={14} className="text-[#0a0d1a] fill-[#0a0d1a]" />
+                        <span className="text-xs font-medium text-[#0a0d1a]">{detail.rating}</span>
+                        <span className="text-[10px] ml-1">({detail.reviewCount} reviews)</span>
+                    </div>
+                </div>
 
-            {/* Badge */}
-            <div className="mb-4">
-              <span className="text-black text-xs font-semibold uppercase tracking-wide bg-[#D2B48C]/30 px-4 py-1 rounded-full">
-                Best Seller
-              </span>
+                {/* Title */}
+                <h1 className="text-4xl md:text-5xl font-serif font-medium leading-tight mb-4 text-[#0a0d1a]">
+                    {detail.name}
+                </h1>
+
+                {/* Price */}
+                <div className="flex items-baseline gap-4 mb-8">
+                    <span className="text-2xl font-serif text-[#0a0d1a]">
+                        {detail.price.toLocaleString("vi-VN")}₫
+                    </span>
+                    {detail.originalPrice && (
+                         <span className="text-lg text-gray-400 line-through font-light decoration-gray-300">
+                            {detail.originalPrice.toLocaleString("vi-VN")}₫
+                        </span>
+                    )}
+                </div>
+
+                {/* Description */}
+                <p className="text-gray-500 font-light leading-relaxed mb-10 text-sm md:text-base border-t border-gray-100 pt-6">
+                    {detail.description}
+                </p>
+
+                <div className="space-y-6">
+                    {/* Quantity Selector (Minimalist) */}
+                    <div className="flex items-center justify-between border border-gray-200 p-4">
+                        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Quantity</span>
+                        <div className="flex items-center gap-6">
+                            <button onClick={() => handleQuantity("dec")} className="hover:text-[#D2B48C] transition-colors"><Minus size={16}/></button>
+                            <span className="w-4 text-center text-sm font-medium">{quantity}</span>
+                            <button onClick={() => handleQuantity("inc")} className="hover:text-[#D2B48C] transition-colors"><Plus size={16}/></button>
+                        </div>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-4">
+                        <button className="flex-1 bg-[#0a0d1a] text-white h-14 uppercase text-xs font-bold tracking-[0.2em] hover:bg-[#D2B48C] hover:text-[#0a0d1a] transition-all duration-300 flex items-center justify-center gap-3">
+                            <ShoppingBag size={18} /> Add to Cart
+                        </button>
+                        <button className="w-14 h-14 border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-200 transition-all duration-300">
+                            <Heart size={20} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Policies */}
+                <div className="mt-10 space-y-4 pt-8 border-t border-gray-100">
+                    <div className="flex items-start gap-3">
+                        <Truck size={18} className="text-[#D2B48C] mt-0.5" />
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-wide mb-1">Free Delivery</p>
+                            <p className="text-xs text-gray-400">Miễn phí vận chuyển cho đơn hàng trên 500k.</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                        <ShieldCheck size={18} className="text-[#D2B48C] mt-0.5" />
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-wide mb-1">Authentic Guarantee</p>
+                            <p className="text-xs text-gray-400">Hoàn tiền 200% nếu phát hiện hàng giả.</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
-            {/* Name */}
-            <h1 className="text-3xl font-bold text-black mb-3">
-              {detail.name}
-            </h1>
-
-            {/* Rating */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex text-yellow-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={18}
-                    fill={i < Math.floor(detail.rating) ? "currentColor" : "none"}
-                  />
-                ))}
-              </div>
-              <span className="text-gray-500 text-sm">
-                ({detail.reviewCount} đánh giá)
-              </span>
-            </div>
-
-            {/* PRICE */}
-            <div className="flex items-end gap-3 mb-8 border-b border-black/10 pb-8">
-              <span className="text-4xl font-bold text-black">
-                {detail.price.toLocaleString("vi-VN")}₫
-              </span>
-
-              <span className="text-lg text-gray-400 line-through mb-1">
-                {(detail.originalPrice || detail.price * 1.2).toLocaleString("vi-VN")}₫
-              </span>
-            </div>
-
-            {/* DESCRIPTION */}
-            <p className="text-gray-700 mb-8 leading-relaxed">
-              {detail.description}
-            </p>
-
-            {/* QUANTITY */}
-            <div className="flex items-center gap-6 mb-8">
-              <span className="font-semibold text-black">Số lượng:</span>
-              <div className="flex items-center border border-black/20 rounded-lg">
-                <button onClick={() => handleQuantity("dec")} className="p-3 hover:bg-[#f5f5f5] transition cursor-pointer">
-                  <Minus size={16} />
-                </button>
-                <span className="w-12 text-center font-medium">{quantity}</span>
-                <button onClick={() => handleQuantity("inc")} className="p-3 hover:bg-[#f5f5f5] transition cursor-pointer">
-                  <Plus size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* BUTTONS */}
-            <div className="flex gap-4 mb-10">
-              <button className="flex-1 bg-black hover:bg-[#333] text-white font-semibold py-4 rounded-xl transition-all cursor-pointer tracking-wide flex justify-center items-center gap-2">
-                <ShoppingCart size={20} /> Thêm vào giỏ
-              </button>
-
-              <button className="px-5 py-4 border-2 border-black/20 rounded-xl hover:border-[#D2B48C] cursor-pointer hover:text-[#D2B48C] transition-colors">
-                <Heart size={24} />
-              </button>
-            </div>
-
-            {/* COMMITMENTS */}
-            <div className="space-y-3 pt-6 border-t border-black/10">
-              <div className="flex items-center gap-3 text-sm text-gray-700">
-                <Truck className="text-black" size={20} />
-                <span>Miễn phí vận chuyển toàn quốc</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-700">
-                <ShieldCheck className="text-black" size={20} />
-                <span>Bảo hành chính hãng 12 tháng</span>
-              </div>
-            </div>
-
           </div>
         </div>
-        <ReviewSection reviews={detail.reviews} />
-        <AddReviewForm onSubmit={addReview} />
+        
+        {/* 4. REVIEWS SECTION */}
+        <div className="mt-24 pt-16 border-t border-gray-200">
+            <h2 className="text-2xl font-serif italic text-center mb-12">Client Reviews</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div className="lg:col-span-1">
+                    <AddReviewForm onSubmit={addReview} />
+                </div>
+                <div className="lg:col-span-2">
+                    <ReviewSection reviews={detail.reviews} />
+                </div>
+            </div>
+        </div>
       </div>
+
+      {isZoomOpen && (
+        <div className="fixed inset-0 z-50 bg-[#0a0d1a]/95 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-300">
+          <button 
+            onClick={() => setIsZoomOpen(false)} 
+            className="absolute top-6 right-6 text-white hover:text-[#D2B48C] transition-colors p-2"
+          >
+            <X size={32} strokeWidth={1} />
+          </button>
+          
+          <div className="w-full h-full p-4 md:p-10 flex items-center justify-center">
+            <img 
+              src={detail.images[selectedImage]} 
+              className="max-w-full max-h-full object-contain shadow-2xl"
+              alt="Zoomed product"
+            />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

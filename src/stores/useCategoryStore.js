@@ -26,6 +26,11 @@ export const useCategoryStore = create((set, get) => ({
     }
   },
 
+  getFlatCategories: () => {
+    const grouped = get().categories;
+    return Object.values(grouped).flat();
+  },
+
   moveCategoryToGroup: (id, targetGroup) => {
     const groups = structuredClone(get().categories);
     let found;
@@ -47,4 +52,6 @@ export const useCategoryStore = create((set, get) => ({
 
     set({ categories: groups });
   },
+
+  
 }));

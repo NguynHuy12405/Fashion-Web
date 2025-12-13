@@ -1,21 +1,33 @@
+import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuthStore } from "../stores/useAuthStore";
 import Footer from "../components/footer/Footer";
 import Header from "../components/header/Header";
 
 export default function UserLayout() {
-  const user = useAuthStore(state => state.user);
-  const location = useLocation();
-  if (!user) return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  const user = useAuthStore((state) => state.user);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  }, [pathname]);
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: pathname }} replace />;
+  }
 
   return (
-    <div className="bg-[#ffffff]">
+    <div className="min-h-screen flex flex-col bg-white font-sans text-[#0a0d1a]">
       <Header />
-      <div className="min-h-screen flex flex-col pb-8 my-auto">
-        <main className="grow pt-[60px]">
-          <Outlet />
-        </main>
-      </div>
+
+      <main className="grow pt-[120px] md:pt-[164px] flex flex-col animate-fade-in relative">
+        <Outlet />
+      </main>
+
       <Footer />
     </div>
   );

@@ -52,3 +52,7 @@
 .animate-zoomIn {
   animation: zoomIn 0.35s cubic-bezier(.4,0,.2,1);
 }
+
+button {
+  cursor: pointer;
+}

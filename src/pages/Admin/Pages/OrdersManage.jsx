@@ -1,11 +1,12 @@
 import { Download, Eye, Package, CheckCircle, Clock } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
-import OrderDetail from '../../Order/OrderDetail';
-import StatCard from "../../../components/card/StatCard";
-import StatusBadge from "../../../components/card/StatusBadge";
 import { useOrderStore } from '../../../stores/useOrderStore';
 import { useAuthStore } from '../../../stores/useAuthStore';
-// import Pagination from '../../../components/pagination/Pagination';
+import { useUIStore } from '../../../stores/useUIStore';
+import OrderDetail from '../../Order/OrderDetail';
+import StatCard from "../../../components/stat/StatCard";
+import StatusBadge from "../../../components/stat/StatusBadge";
+import Pagination from '../../../components/pagination/Pagination';
 
 const STATUS_OPTIONS = ["Tất cả", "Đang xử lý", "Hoàn thành", "Đã hủy"];
 const PAGE_SIZE = 10;
@@ -14,10 +15,8 @@ export default function ManageOrders()  {
   const user = useAuthStore((s) => s.user);
   const getAllOrders = useOrderStore((s) => s.getAllOrders);
   const getOrdersByCurrentUser = useOrderStore((s) => s.getOrdersByCurrentUser);
-  
+  const { statusFilter, setStatusFilter, currentPage, setCurrentPage } = useUIStore();
   const [openOrderId, setOpenOrderId] = useState(null);
-  const [statusFilter, setStatusFilter] = useState("Tất cả");
-  const [currentPage, setCurrentPage] = useState(1);
 
   // Phân quyền
   const orders = user?.role === "Admin" ? getAllOrders() : getOrdersByCurrentUser();
@@ -39,8 +38,10 @@ export default function ManageOrders()  {
     setOpenOrderId(openOrderId === id ? null : id);
   };
 
-  const handlePrevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
-  const handleNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  const handlePaginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen p-8">
@@ -127,19 +128,8 @@ export default function ManageOrders()  {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="p-4 border-t border-gray-100 flex justify-end gap-2">
-            <button onClick={handlePrevPage} disabled={currentPage === 1} className="px-3 py-1 border border-gray-200 rounded text-sm text-gray-500 hover:bg-gray-50">Trước</button>
-            <span className="px-3 py-1 text-sm">{currentPage} / {totalPages}</span>
-            <button onClick={handleNextPage} disabled={currentPage === totalPages} className="px-3 py-1 border border-gray-200 rounded text-sm text-gray-500 hover:bg-gray-50">Sau</button>
-          </div>
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePaginate} />
         )}
-
-        {/* <Pagination
-            productsPerPage={productsPerPage} 
-            totalProducts={products.length} 
-            paginate={paginate}
-            currentPage={currentPage}
-        /> */}
       </div>
     </div>
   );

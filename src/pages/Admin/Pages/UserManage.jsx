@@ -1,26 +1,23 @@
 import { User, Search, Edit, Trash2, BookUser, UserCog } from 'lucide-react';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import React, { useMemo, useState } from 'react';
-import StatCard from "../../../components/card/StatCard";
+import React, { useMemo } from 'react';
+import StatCard from "../../../components/stat/StatCard";
 import EditUser from "../../../components/form/CRUD/EditUser";
+import { useUIStore } from '../../../stores/useUIStore';
+import Pagination from '../../../components/pagination/Pagination';
 
 const STATUS_OPTIONS = ["Tất cả", "Admin", "User"];
 const PAGE_SIZE = 10;
 
 export default function UserManager() {
-  const users = useAuthStore((s) => s.users);
-  const updateUser = useAuthStore((s) => s.updateUser);
-  const deleteUser = useAuthStore((s) => s.deleteUser);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [rolesFilter, setRolesFilter] = useState("Tất cả");
-  const [currentPage, setCurrentPage] = useState(1);
+  const { users, updateUser, deleteUser } = useAuthStore();
+  const { statusFilter, setStatusFilter, currentPage, setCurrentPage, toggleEditModal, isEditOpen, selectedUser, setSelectedUser } = useUIStore();
 
   // Lọc theo trạng thái
   const filteredUser = useMemo(() => {
-    if (rolesFilter === "Tất cả") return users;
-    return users.filter(o => o.role === rolesFilter);
-  }, [users, rolesFilter]);
+    if (statusFilter === "Tất cả") return users;
+    return users.filter(o => o.role === statusFilter);
+  }, [users, statusFilter]);
 
   // Phân trang
   const totalPages = Math.ceil(filteredUser.length / PAGE_SIZE);
@@ -31,7 +28,7 @@ export default function UserManager() {
 
   const handleEditClick = (user) => {
     setSelectedUser(user);
-    setIsEditOpen(true);
+    toggleEditModal(true);
   };
 
   const handleSaveUser = (updatedUser) => {
@@ -42,6 +39,11 @@ export default function UserManager() {
     if (confirm("Bạn có chắc muốn xóa user này?")) {
       deleteUser(userId);
     }
+  };
+
+  const handlePaginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -70,7 +72,7 @@ export default function UserManager() {
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
             />
           </div>
-          <select value={rolesFilter} onChange={(e) => setRolesFilter(e.target.value)} className="px-4 py-2 border rounded-lg text-sm text-gray-600 focus:outline-none cursor-pointer">
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-2 border rounded-lg text-sm text-gray-600 focus:outline-none cursor-pointer">
             {STATUS_OPTIONS.map(roles => (
             <option key={roles} value={roles}>{roles}</option>
           ))}
@@ -135,32 +137,12 @@ export default function UserManager() {
         
         {/* Pagination */}
         <div className="p-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
-          <span>
-            Trang {currentPage}/{totalPages} — Tổng {filteredUser.length} user
-          </span>
-
-          <div className="flex gap-2">
-            <button
-              className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(prev => prev - 1)}
-            >
-              Trước
-            </button>
-
-            <button
-              className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(prev => prev + 1)}
-            >
-              Sau
-            </button>
-          </div>
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePaginate} />
         </div>
       </div>
       <EditUser 
         isOpen={isEditOpen} 
-        onClose={() => setIsEditOpen(false)} 
+        onClose={() => toggleEditModal(false)} 
         user={selectedUser} 
         onSave={handleSaveUser} 
       />

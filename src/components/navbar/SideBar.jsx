@@ -1,6 +1,6 @@
 import { ArrowBigLeftDash, Handbag, LayoutDashboard, Menu, ReceiptText, Settings, Users } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation } from "react-router-dom";
 
 export default function SideBar() {
     const [open, setOpen] = useState(true);
@@ -11,7 +11,6 @@ export default function SideBar() {
         { label: "Products", icon: <Handbag size={20} />, path: "/admin/products" },
         { label: "Orders", icon: <ReceiptText size={20} />, path: "/admin/orders" },
         { label: "Users", icon: <Users size={20} />, path: "/admin/users" },
-        // { label: "Settings", icon: <Settings size={20} />, path: "/admin/settings" },
         { label: "Back To Home", icon: <ArrowBigLeftDash size={20} />, path: "/" }
     ];
 
@@ -31,7 +30,7 @@ export default function SideBar() {
                                 <Link
                                     to={item.path}
                                     className={`flex items-center gap-3 p-2 rounded-xl transition 
-                                        ${isActive ? "bg-orange-500 text-white" : "hover:bg-gray-200"}`}
+                                        ${isActive ? "bg-[#D2B48C] text-white" : "hover:bg-gray-200"}`}
                                 >
                                     {item.icon}
                                     {open && <span>{item.label}</span>}

@@ -94,9 +94,30 @@ export const users = [
 
 // SliderShows
 export const slider = [
-  { id: 1, img: "./img/slider.png", title: "Giảm giá iPhone 17 Pro Max", subtitle: "Giảm đến 20% – số lượng có hạn!" },
-  { id: 2, img: "./img/slider.png", title: "Samsung Galaxy S25 Ultra", subtitle: "Công nghệ vượt trội – camera AI siêu nét" },
-  { id: 3, img: "./img/slider.png", title: "Xiaomi 15 Ultra", subtitle: "Pin 2 ngày – sạc 120W – hiệu năng khủng" },
+  {
+    id: 1,
+    type: "video", // Đánh dấu đây là video
+    src: "/video/high.mp4",
+    title: "Street Style",
+    subtitle: "Most Popular",
+    desc: "Đánh thức bản lĩnh đường phố với những thiết kế táo bạo."
+  },
+  {
+    id: 2,
+    type: "image", // Đánh dấu đây là ảnh
+    src: "./img/banner4.jpg",
+    title: "Hiphop & Drill",
+    subtitle: "New Collection",
+    desc: "Khám phá vẻ đẹp thanh lịch của mùa thu với những thiết kế mới nhất."
+  },
+  {
+    id: 3,
+    type: "image",
+    src: "./img/banner1.jpg",
+    title: "Gangster",
+    subtitle: "Best Seller",
+    desc: "Sự tối giản làm nên đẳng cấp khác biệt."
+  },
 ];
 
 // Stats
