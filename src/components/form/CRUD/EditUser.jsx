@@ -163,7 +163,6 @@ export default function EditUser({ isOpen, onClose, user }) {
           </div>
         </form>
 
-        {/* Footer */}
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
           <button 
             onClick={handleDelete}

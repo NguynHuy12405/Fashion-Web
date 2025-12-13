@@ -2,9 +2,9 @@ import { X, UploadCloud, Save, Download } from 'lucide-react';
 import { useProductStore } from '../../../stores/useProductStore';
 import { useEffect } from 'react';
 import { useCategoryStore } from '../../../stores/useCategoryStore';
-import InputForm from "../../../components/form/InputForm";
-import SelectForm from "../../../components/form/SelectForm";
-import TextareaForm from "../../../components/form/TextareaForm";
+import InputForm from "../InputForm";
+import SelectForm from "../SelectForm";
+import TextareaForm from "../TextareaForm";
 
 export default function AddProduct({ isOpen, onClose }) {
   const { addProduct, setFormData, setImages, formData, images, removeImage, resetForm } = useProductStore();
@@ -199,7 +199,6 @@ export default function AddProduct({ isOpen, onClose }) {
           </div>
         </form>
 
-        {/* FOOTER */}
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-between items-center">
           <button className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 flex items-center gap-2">
             <Download size={20} /> Thêm file Excel

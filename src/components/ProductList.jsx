@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useProductStore } from "../stores/useProductStore";
-import ProductCard from "./ProductCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ProductCard from "../components/card/ProductCard";
 
 export default function ProductList({ titleProducts }) {
   const { products, loadProducts } = useProductStore();

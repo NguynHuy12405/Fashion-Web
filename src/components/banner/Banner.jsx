@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { slider } from "../mockData/data";
+import { slider } from "../../mockData/data";
 import { useNavigate } from "react-router";
-import ButtonLink from "./Button/ButtonLink";
+import ButtonLink from "../Button/ButtonLink";
 
-export default function Slider() {
+export default function Banner() {
   const [index, setIndex] = useState(0);
   const [pause, setPause] = useState(false);
   const [direction, setDirection] = useState("right");

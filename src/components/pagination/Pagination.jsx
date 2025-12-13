@@ -1,10 +1,5 @@
-export default function Pagination({
-  productsPerPage,
-  totalProducts,
-  paginate,
-  currentPage,
-}) {
-  const totalPages = Math.ceil(totalProducts / productsPerPage);
+export default function Pagination({ totalPages, currentPage, onPageChange }) {
+  if (totalPages <= 1) return null;
 
   const getPageList = () => {
     let pages = [];
@@ -33,59 +28,52 @@ export default function Pagination({
 
   return (
     <div className="flex justify-center mt-10 gap-2">
-
+      {/* Previous */}
       <button
         disabled={currentPage === 1}
-        onClick={() => paginate(currentPage - 1)}
-        className={`
-          px-4 py-2 rounded-xl text-sm border border-black/20 
-          transition-all duration-200
-          ${currentPage === 1 
-            ? "opacity-30 cursor-not-allowed" 
+        onClick={() => onPageChange(currentPage - 1)}
+        className={`px-4 py-2 rounded-xl text-sm border border-black/20 transition
+          ${currentPage === 1
+            ? "opacity-30 cursor-not-allowed"
             : "hover:bg-[#D2B48C]/20"
-          }
-        `}
+          }`}
       >
         Trước
       </button>
 
+      {/* Pages */}
       {pageList.map((page, index) =>
         page === "..." ? (
-          <div
+          <span
             key={`dots-${index}`}
             className="px-3 py-2 text-black/40 select-none"
           >
             ...
-          </div>
+          </span>
         ) : (
           <button
             key={`page-${page}`}
-            onClick={() => paginate(page)}
-            className={`
-              w-10 h-10 rounded-xl font-medium transition-all duration-200 flex items-center justify-center border
-              ${
-                currentPage === page
-                  ? "bg-black text-[#D2B48C] border-black shadow-[0_4px_10px_rgba(0,0,0,0.25)] scale-105"
-                  : "bg-white text-black border-black/20 hover:bg-[#D2B48C]/20"
-              }
-            `}
+            onClick={() => onPageChange(page)}
+            className={`w-10 h-10 rounded-xl border flex items-center justify-center transition
+              ${currentPage === page
+                ? "bg-black text-[#D2B48C] border-black shadow scale-105"
+                : "bg-white border-black/20 hover:bg-[#D2B48C]/20"
+              }`}
           >
             {page}
           </button>
         )
       )}
 
+      {/* Next */}
       <button
         disabled={currentPage === totalPages}
-        onClick={() => paginate(currentPage + 1)}
-        className={`
-          px-4 py-2 rounded-xl text-sm border border-black/20
-          transition-all duration-200
-          ${currentPage === totalPages 
-            ? "opacity-30 cursor-not-allowed" 
+        onClick={() => onPageChange(currentPage + 1)}
+        className={`px-4 py-2 rounded-xl text-sm border border-black/20 transition
+          ${currentPage === totalPages
+            ? "opacity-30 cursor-not-allowed"
             : "hover:bg-[#D2B48C]/20"
-          }
-        `}
+          }`}
       >
         Sau
       </button>

@@ -1,8 +1,8 @@
 import { User, Search, Edit, Trash2, BookUser, UserCog } from 'lucide-react';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import React, { useMemo, useState } from 'react';
-import EditUser from '../componentAdmin/EditUser';
-import StatCard from '../../../components/StatCard';
+import StatCard from "../../../components/card/StatCard";
+import EditUser from "../../../components/form/CRUD/EditUser";
 
 const STATUS_OPTIONS = ["Tất cả", "Admin", "User"];
 const PAGE_SIZE = 10;

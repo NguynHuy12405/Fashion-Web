@@ -1,7 +1,7 @@
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from "recharts";
-import { getMonthlyChartData } from "../../../utils/GetTotalRevenue";
+import { getMonthlyChartData } from "../utils/GetTotalRevenue";
 
 
 const CustomTooltip = ({ active, payload, label }) => {

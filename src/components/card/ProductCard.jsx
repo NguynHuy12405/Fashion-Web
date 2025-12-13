@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useCartStore } from "../stores/useCartStore";
+import { useCartStore } from "../../stores/useCartStore";
 import { CreditCard, ShoppingCart, Star } from "lucide-react";
 
 export default function ProductCard({ product }) {

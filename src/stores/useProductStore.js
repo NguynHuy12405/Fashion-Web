@@ -3,17 +3,19 @@ import productApi from "../api/productApi";
 import categoryApi from "../api/categoryApi";
 
 export const useProductStore = create((set, get) => ({
-  // STATE
+  // ===== DATA =====
   products: [],
   categories: [],
   productDetail: null,
 
-  isAddOpen: false,
-  isEditOpen: false,
-  selectedProduct: null,
-  productFilter: "Tất cả",
-  currentPage: 1,
+  // ===== NEW: API PAGINATION =====
+  page: 1,
+  limit: 9,
+  total: 0,
+  category: null,
+  loading: false,
 
+  // ===== FORM =====
   formData: {
     name: "",
     price: "",
@@ -24,120 +26,109 @@ export const useProductStore = create((set, get) => ({
   },
   images: [],
 
-  // GET CATEGORY NAME
-getCategoryName: (slug) => {
-  if (!slug) return "Chưa phân loại";
+  // ===== HELPERS =====
+  getCategoryName: (slug) => {
+    if (!slug) return "Chưa phân loại";
+    const cat = get().categories.find(c => c.slug === slug);
+    return cat ? cat.name : "Chưa phân loại";
+  },
 
-  const cat = get().categories.find((c) => c.slug === slug);
-  return cat ? cat.name : "Chưa phân loại";
-},
-
-// LOAD PRODUCTS
-loadProducts: async () => {
-  try {
-    const data = await productApi.getAll();
-
-    const mapped = data.products.map(p => ({
-      id: p.id,
-      name: p.title,
-      price: Number(p.price) || 0,
-      stock: p.stock ?? 10,
-      category: p.category ?? "",
-      categoryId: p.category ?? "",
-      status:
-        p.stock === 0 ? "Hết hàng" :
-        p.stock <= 5 ? "Sắp hết" : "Còn hàng",
-      image: p.thumbnail,
-      images: p.images,
-      description: p.description,
-      rating: Number(p.rating) || 0,
-      discountPercentage: Number(p.discountPercentage) || 0,
-      reviewCount: Array.isArray(p.reviews) ? p.reviews.length : 0,
-      reviews: Array.isArray(p.reviews) || [],
-    }));
-
-    set({ products: mapped });
-  } catch (err) {
-    console.error("Load products error:", err);
-  }
-},
-
-  loadCategories: async () => {
-  try {
-    const data = await categoryApi.getAll();
-
-    const mapped = data.map((slug, index) => ({
-      id: index + 1,
-      slug: slug,
-      name: slug.charAt(0).toUpperCase() + slug.slice(1),
-    }));
-
-    set({ categories: mapped });
-  } catch (err) {
-    console.error("Load categories error:", err);
-  }
-},
-
-  // LOAD DETAIL
-  loadProductDetail: async (id) => {
+  // ===== LOAD PRODUCTS (API READY) =====
+  loadProducts: async () => {
     try {
-      const p = await productApi.getById(id);
+      set({ loading: true });
 
-      const mapped = {
+      const { page, limit, category } = get();
+
+      const data = await productApi.getList({
+        page,
+        limit,
+        category,
+      });
+
+      set({
+        products: data.products.map(p => ({
+          id: p.id,
+          name: p.title,
+          price: Number(p.price) || 0,
+          stock: p.stock ?? 10,
+          category: p.category ?? "",
+          categoryId: p.category ?? "",
+          status:
+            p.stock === 0 ? "Hết hàng" :
+            p.stock <= 5 ? "Sắp hết" : "Còn hàng",
+          image: p.thumbnail,
+          images: p.images,
+          description: p.description,
+          rating: Number(p.rating) || 0,
+          discountPercentage: Number(p.discountPercentage) || 0,
+          reviewCount: Array.isArray(p.reviews) ? p.reviews.length : 0,
+          reviews: Array.isArray(p.reviews) ? p.reviews : [],
+        })),
+        total: data.total,
+        loading: false,
+      });
+    } catch (err) {
+      console.error(err);
+      set({ loading: false });
+    }
+  },
+
+  // ===== CATEGORY =====
+  loadCategories: async () => {
+    const data = await categoryApi.getAll();
+    set({
+      categories: data.map((slug, index) => ({
+        id: index + 1,
+        slug,
+        name: slug.charAt(0).toUpperCase() + slug.slice(1),
+      })),
+    });
+  },
+
+  // ===== DETAIL =====
+  loadProductDetail: async (id) => {
+    const p = await productApi.getById(id);
+    set({
+      productDetail: {
         id: p.id,
         name: p.title,
         price: p.price,
         stock: p.stock ?? 10,
         category: p.category,
-        categoryId: p.category,
         image: p.thumbnail,
         images: p.images,
         description: p.description,
-        reviewCount: p.reviews.length,
         reviews: p.reviews,
-      };
-
-      set({ productDetail: mapped });
-    } catch (err) {
-      console.error("Load detail error:", err);
-    }
+      },
+    });
   },
 
-  // CRUD Local (Demo)
-  addProduct: (newProduct) =>
+  addReview: (review) =>
     set((state) => ({
-      products: [...state.products, newProduct],
-    })),
+      productDetail: {
+        ...state.productDetail,
+        reviews: [...(state.productDetail?.reviews || []), review],
+      },
+  })),
 
-  removeProduct: (id) =>
-    set((state) => ({
-      products: state.products.filter((p) => p.id !== id),
-    })),
 
-  updateProduct: (updatedProduct) =>
-    set((state) => ({
-      products: state.products.map((p) =>
-        p.id === updatedProduct.id ? updatedProduct : p
-      ),
-    })),
+  // ===== PAGINATION =====
+  setPage: (page) => set(() => ({ page: Math.max(1, page) })),
+  setLimit: (limit) => set({ limit, page: 1 }),
+  resetPagination: () => set({ page: 1, total: 0 }),
+  setTotal: (total) => set({ total }),
 
-  // UI STATE
-  toggleAddModal: (open) => set({ isAddOpen: open }),
-  toggleEditModal: (open) => set({ isEditOpen: open }),
-  setSelectedProduct: (product) => set({ selectedProduct: product }),
-  setProductFilter: (filter) => set({ productFilter: filter }),
-  setCurrentPage: (page) => set({ currentPage: page }),
 
-  // FORM
+  // ===== FILTER =====
+  setCategory: (category) => set({ category, page: 1 }),
+
+  // ===== FORM =====
   setFormData: (data) =>
-    set({
-      formData: { ...get().formData, ...data },
-    }),
+    set({ formData: { ...get().formData, ...data } }),
 
   updateFormField: (field, value) =>
-    set({
-      formData: { ...get().formData, [field]: value },
-    }),
+    set({ formData: { ...get().formData, [field]: value } }),
 
   resetForm: () =>
     set({
@@ -152,7 +143,7 @@ loadProducts: async () => {
       images: [],
     }),
 
-  // IMAGES
+  // ===== IMAGES =====
   setImages: (imgs) => set({ images: imgs }),
   addImage: (img) =>
     set((state) => ({ images: [...state.images, img] })),
@@ -162,3 +153,4 @@ loadProducts: async () => {
     set({ images: imgs });
   },
 }));
+

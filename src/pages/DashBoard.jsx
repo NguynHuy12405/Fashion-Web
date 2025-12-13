@@ -1,12 +1,11 @@
 import ProductList from "../components/ProductList";
-import Slider from "../components/Slider";
-
+import Banner from "../components/banner/Banner";
 
 export default function DashBoard() {
   return (
     <>
       {/* SLIDER */}
-      <Slider />
+      <Banner />
       {/* PRODUCT SECTIONS */}
       <section className="mx-auto px-4 space-y-12">
         <ProductList titleProducts="Sản Phẩm Nổi Bật" />

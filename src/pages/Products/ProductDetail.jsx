@@ -8,10 +8,10 @@ import AddReviewForm from "../../components/form/AddReviewForm";
 export default function ProductDetail() {
   const detail = useProductStore((s) => s.productDetail);
   const loadProductDetail = useProductStore((s) => s.loadProductDetail);
+  const addReview = useProductStore((s) => s.addReview);
 
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [ setReviews ] = useState([]);
   const [selectedImage, setSelectedImage] = useState(0);
   const { id } = useParams();
 
@@ -171,7 +171,7 @@ export default function ProductDetail() {
           </div>
         </div>
         <ReviewSection reviews={detail.reviews} />
-        <AddReviewForm onSubmit={(newReview) => setReviews((prev) => [...prev, newReview])} />
+        <AddReviewForm onSubmit={addReview} />
       </div>
     </div>
   );

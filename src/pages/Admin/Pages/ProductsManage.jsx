@@ -1,29 +1,30 @@
 import { useEffect, useMemo } from "react";
 import { Plus, Edit2, Trash, Search } from "lucide-react";
 import { useProductStore } from "../../../stores/useProductStore";
-import AddProduct from "../componentAdmin/AddProduct";
-import EditProduct from "../componentAdmin/EditProduct";
-import StatusBadge from "../../../components/StatusBadge";
+import StatusBadge from "../../../components/card/StatusBadge";
+import AddProduct from "../../../components/form/CRUD/AddProduct";
+import EditProduct from "../../../components/form/CRUD/EditProduct";
+import { useUIStore } from "../../../stores/useUIStore";
 
 const STATUS_OPTIONS = ["Tất cả", "Còn hàng", "Sắp hết", "Hết hàng"];
 const PAGE_SIZE = 10;
 
 export default function ManageProducts() {
+  const { products, loadProducts, updateProduct } = useProductStore();
+
   const {
-    products,
-    loadProducts,
-    updateProduct,
+    productFilter,
+    setProductFilter,
+    currentPage,
+    setCurrentPage,
+    isAddOpen,
+    isEditOpen,
+    selectedProduct,
     toggleAddModal,
     toggleEditModal,
     setSelectedProduct,
-    setCurrentPage,
-    setProductFilter,
-    currentPage,
-    productFilter,
-    isAddOpen,
-    isEditOpen,
-    selectedProduct
-  } = useProductStore();
+  } = useUIStore();
+
 
   const filteredProduct = useMemo(() => {
     if (productFilter === "Tất cả") return products;
@@ -38,19 +39,22 @@ export default function ManageProducts() {
   );
 
   useEffect(() => {
-  if (totalPages === 0) {
-    setCurrentPage(1);
-    return;
-  }
-  if (currentPage > totalPages) {
-    setCurrentPage(totalPages);
-  }
-}, [totalPages]);
-
-
-  useEffect(() => {
     loadProducts();
   }, []);
+
+  useEffect(() => {
+    if (totalPages === 0) {
+      setCurrentPage(1);
+      return;
+    }
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage, setCurrentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [productFilter, setCurrentPage]);
 
   // Mở popup chỉnh sửa
   const handleEditClick = (product) => {
@@ -123,8 +127,8 @@ export default function ManageProducts() {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <img
-                      src={item.img}
-                      alt=""
+                      src={item.image}
+                      alt={item.name}
                       className="w-10 h-10 rounded-lg object-cover border border-gray-100"
                     />
                     <span className="font-medium text-gray-800">

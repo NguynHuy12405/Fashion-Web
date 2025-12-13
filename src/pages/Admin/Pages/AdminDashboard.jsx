@@ -1,9 +1,8 @@
+import Chart from "../../../components/Chart";
 import { stats } from "../../../mockData/data";
-import Chart from "../componentAdmin/Chart";
 import { DollarSign, ShoppingBag, Users, Activity, TrendingUp } from 'lucide-react';
 
 export default function DashboardManager() {
-
 
   const getStatStyle = (label) => {
     const lowerLabel = label.toLowerCase();

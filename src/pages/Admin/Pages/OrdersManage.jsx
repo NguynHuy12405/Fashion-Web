@@ -1,10 +1,11 @@
 import { Download, Eye, Package, CheckCircle, Clock } from 'lucide-react';
-import StatusBadge from '../../../components/StatusBadge';
 import React, { useState, useMemo } from 'react';
 import OrderDetail from '../../Order/OrderDetail';
+import StatCard from "../../../components/card/StatCard";
+import StatusBadge from "../../../components/card/StatusBadge";
 import { useOrderStore } from '../../../stores/useOrderStore';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import StatCard from '../../../components/StatCard';
+// import Pagination from '../../../components/pagination/Pagination';
 
 const STATUS_OPTIONS = ["Tất cả", "Đang xử lý", "Hoàn thành", "Đã hủy"];
 const PAGE_SIZE = 10;
@@ -132,6 +133,13 @@ export default function ManageOrders()  {
             <button onClick={handleNextPage} disabled={currentPage === totalPages} className="px-3 py-1 border border-gray-200 rounded text-sm text-gray-500 hover:bg-gray-50">Sau</button>
           </div>
         )}
+
+        {/* <Pagination
+            productsPerPage={productsPerPage} 
+            totalProducts={products.length} 
+            paginate={paginate}
+            currentPage={currentPage}
+        /> */}
       </div>
     </div>
   );

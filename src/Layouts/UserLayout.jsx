@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuthStore } from "../stores/useAuthStore";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Footer from "../components/footer/Footer";
+import Header from "../components/header/Header";
 
 export default function UserLayout() {
   const user = useAuthStore(state => state.user);
